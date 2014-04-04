@@ -1,7 +1,7 @@
 from django.contrib.syndication.feeds import Feed
 from django.contrib.syndication.feeds import FeedDoesNotExist
 from django.core.exceptions import ObjectDoesNotExist
-
+from django.utils.translation import ugettext_lazy as _
 from news_and_events.models import NewsArticle
 from contacts_and_people.models import Entity, Person
 
@@ -37,7 +37,7 @@ class LatestNewsArticlesForEntity(LatestNewsArticles):
         return obj.get_absolute_url()
     
     def description(self, obj):
-        return 'News relevant for the entity "%s"' % obj
+        return _('News relevant for the entity "%s"') % obj
 
 
 class LatestNewsArticlesForContactPerson(LatestNewsArticles):
@@ -58,7 +58,7 @@ class LatestNewsArticlesForContactPerson(LatestNewsArticles):
         return obj.get_absolute_url()
     
     def description(self, obj):
-        return 'News with the contact "%s"' % obj
+        return _('News with the contact "%s"') % obj
 
 
 class LatestNewsArticlesForRelatedPerson(LatestNewsArticles):
@@ -79,5 +79,5 @@ class LatestNewsArticlesForRelatedPerson(LatestNewsArticles):
         return obj.get_absolute_url()
     
     def description(self, obj):
-        return 'News with the the related person "%s"' % obj
+        return _('News with the the related person "%s"') % obj
 

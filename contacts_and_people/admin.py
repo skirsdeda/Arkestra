@@ -61,11 +61,11 @@ class MembershipAdmin(admin.ModelAdmin):
 # ------------------------- Phone contact admin -------------------------
 
 class PhoneContactInlineForm(forms.ModelForm):
-    label = ComboboxField(label = "label", choices=models.PhoneContact.LABEL_CHOICES, required=False)
-    country_code = forms.CharField(label="Country code", initial = "44", widget=forms.TextInput(attrs={'size':'4'}))
-    area_code = forms.CharField(label="Area code", initial = "29", widget=forms.TextInput(attrs={'size':'5'}))
-    number = forms.CharField(label="Number", widget=forms.TextInput(attrs={'size':'10'}))
-    internal_extension = forms.CharField(label="Internal extension", widget=forms.TextInput(attrs={'size':'6'}), required=False)
+    label = ComboboxField(label = _("label"), choices=models.PhoneContact.LABEL_CHOICES, required=False)
+    country_code = forms.CharField(label=_("Country code"), initial = "44", widget=forms.TextInput(attrs={'size':'4'}))
+    area_code = forms.CharField(label=_("Area code"), initial = "29", widget=forms.TextInput(attrs={'size':'5'}))
+    number = forms.CharField(label=_("Number"), widget=forms.TextInput(attrs={'size':'10'}))
+    internal_extension = forms.CharField(label=_("Internal extension"), widget=forms.TextInput(attrs={'size':'6'}), required=False)
 
     class Meta:
         model = models.PhoneContact
@@ -92,7 +92,7 @@ class PersonLiteForm(forms.ModelForm):
     def clean(self):
         super(PersonLiteForm, self).clean()
         if hasattr(self.instance, "person"):
-            raise forms.ValidationError(mark_safe(u"A PersonLite who is also a Person must be edited using the Person Admin Interface"))
+            raise forms.ValidationError(mark_safe(_("A PersonLite who is also a Person must be edited using the Person Admin Interface")))
         return self.cleaned_data
 
 
@@ -121,7 +121,7 @@ class PersonForm(InputURLMixin):
         instance = getattr(self, 'instance', None)
         if instance and instance.id and instance.user:
             self.fields['user'].widget = DisplayUsernameWidget()
-            self.fields['user'].help_text = "Once a user has been assigned, it cannot be changed"
+            self.fields['user'].help_text = _("Once a user has been assigned, it cannot be changed")
 
     def clean_please_contact(self):
         data = self.cleaned_data['please_contact']
@@ -135,7 +135,7 @@ class PersonForm(InputURLMixin):
                 for p in person_list:
                     r.append(u'"%s"' % p)
                 r = u' &rarr; '.join(r)
-                raise forms.ValidationError(mark_safe(u"Please prevent loops: %s" % r))
+                raise forms.ValidationError(mark_safe(_("Please prevent loops: %s") % r))
         return data
 
     def clean(self):
@@ -161,7 +161,7 @@ def create_action(entity):
             m = models.Membership(person=person,entity=entity,role="Member")
             m.save()
     name="entity_%s" % (entity,)
-    return (name, (action, name,"Add selected Person to %s as 'Member'" % (entity,)))
+    return (name, (action, name,_("Add selected Person to %s as 'Member'") % (entity,)))
 
 
 class HasHomeRole(SimpleListFilter):
@@ -227,20 +227,20 @@ class PersonAdmin(PersonAndEntityAdmin):
 
     def address_report(self, instance):
         if instance.building and instance.get_full_address == instance.get_entity.get_full_address:
-            return "Warning: this Person has the Specify Building field set, probably unnecessarily."
+            return _("Warning: this Person has the Specify Building field set, probably unnecessarily.")
         else:
-            return "%s" % (", ".join(instance.get_full_address)) or "<span class='errors'>Warning: this person has no address.</span>"
+            return "%s" % (", ".join(instance.get_full_address)) or _("<span class='errors'>Warning: this person has no address.</span>")
 
     address_report.short_description = "Address"
     address_report.allow_tags = True
 
-    name_fieldset = ('Name', {'fields': ('title', 'given_name', 'middle_names', 'surname',),})
-    override_fieldset = ('Over-ride default output', {
+    name_fieldset = (_('Name'), {'fields': ('title', 'given_name', 'middle_names', 'surname',),})
+    override_fieldset = (_('Over-ride default output'), {
         'fields': ('please_contact', 'building',),
         'classes': ('collapse',)
         })
     advanced_fieldset =  (
-        'Institutional settings', {
+        _('Institutional settings'), {
             'fields': ('active', 'user', 'institutional_username', 'staff_id',),
         })
     description_fieldset = (
@@ -249,15 +249,15 @@ class PersonAdmin(PersonAndEntityAdmin):
         'classes': ('plugin-holder', 'plugin-holder-nopage',)
         })
     tabs = [
-        ('Personal details', {'fieldsets': (name_fieldset, fieldsets["image"])}),
-        ('Contact information', {
+        (_('Personal details'), {'fieldsets': (name_fieldset, fieldsets["image"])}),
+        (_('Contact information'), {
                 'fieldsets': (fieldsets["email"], fieldsets["address_report"], fieldsets["location"], override_fieldset),
                 'inlines': [PhoneContactInline,]
                 }),
-        ('Description', {'fieldsets': (description_fieldset,)}),
-        ('Entities', {'inlines':(MembershipForPersonInline,)}),
-        ('Links', {'inlines': (ObjectLinkInline,),}),
-        ('Advanced settings', {'fieldsets': (fieldsets["url"], fieldsets["slug"], advanced_fieldset)}),
+        (_('Description'), {'fieldsets': (description_fieldset,)}),
+        (_('Entities'), {'inlines':(MembershipForPersonInline,)}),
+        (_('Links'), {'inlines': (ObjectLinkInline,),}),
+        (_('Advanced settings'), {'fieldsets': (fieldsets["url"], fieldsets["slug"], advanced_fieldset)}),
     ]
 
     related_search_fields = ('external_url', 'please_contact', 'override_entity', 'user', 'building')
@@ -270,7 +270,7 @@ class DisplayUsernameWidget(forms.TextInput):
     def render(self, name, value, attrs=None):
         user = User.objects.get(pk=value)
         default = super(DisplayUsernameWidget,self).render(name, value, attrs)
-        return mark_safe(u'<span>Assigned user: <strong>%s</strong></span><div style="display: none;">%s</div>' % (user,default))
+        return mark_safe(('<span>Assigned user: <strong>%s</strong></span><div style="display: none;">%s</div>') % (user,default))
 
 # ------------------------- EntityLite admin -------------------------
 
@@ -281,7 +281,7 @@ class EntityLiteForm(forms.ModelForm):
     def clean(self):
         super(EntityLiteForm, self).clean()
         if hasattr(self.instance, "entity"):
-            raise forms.ValidationError(mark_safe(u"An EntityLite who is also a full Entity must be edited using the Entity Admin Interface"))
+            raise forms.ValidationError(mark_safe(_("An EntityLite who is also a full Entity must be edited using the Entity Admin Interface")))
         return self.cleaned_data
 
 
@@ -315,7 +315,7 @@ class EntityForm(InputURLMixin):
             else:
                 # one existed already - if it's this one that's OK
                 if not self.instance.pk == entity.pk:
-                    raise forms.ValidationError('Another entity (%s) already has the same home page (%s).' % (entity, self.cleaned_data["website"]))
+                    raise forms.ValidationError(_(('Another entity (%s) already has the same home page (%s).')) % (entity, self.cleaned_data["website"]))
 
 
         # check ExternalLink-related issues
@@ -327,7 +327,7 @@ class EntityForm(InputURLMixin):
         )
 
         if not self.cleaned_data["website"] and not self.cleaned_data["external_url"]:
-            message = "This entity has neither a home page nor an External URL. Are you sure you want to do that?"
+            message = _("This entity has neither a home page nor an External URL. Are you sure you want to do that?")
             messages.add_message(self.request, messages.WARNING, message)
         if not self.cleaned_data["short_name"]:
             self.cleaned_data["short_name"] = self.cleaned_data["name"]
@@ -384,68 +384,68 @@ class EntityAdmin(PersonAndEntityAdmin, TreeAdmin):
 
     def address_report(self, instance):
         if not instance.abstract_entity:
-            return "%s" % (", ".join(instance.get_full_address)) or "Warning: this Entity has no address."
+            return "%s" % (", ".join(instance.get_full_address)) or _("Warning: this Entity has no address.")
         else:
-            return "This is an abstract entity and therefore has no address"
+            return _("This is an abstract entity and therefore has no address")
 
     address_report.short_description = "Address"
 
-    name_fieldset = ('Name', {'fields': ('name', 'short_name')})
+    name_fieldset = (_('Name'), {'fields': ('name', 'short_name')})
     website_fieldset = ('', {'fields': ('website',)})
-    entity_hierarchy_fieldset = ('Entity hierarchy', {
+    entity_hierarchy_fieldset = (_('Entity hierarchy'), {
         'fields': ('parent', 'display_parent', 'abstract_entity'),
     })
     building_fieldset = ('', {'fields': ('building', 'building_recapitulates_entity_name',),})
 
     contact_page_fieldset = (
-        ('Automatic contacts & people page', {
+        (_('Automatic contacts & people page'), {
             'fields': ('auto_contacts_page', 'contacts_page_menu_title',),
         }),
-        ('Text for the contacts & people page', {
+        (_('Text for the contacts & people page'), {
             'fields': ('contacts_page_intro',),
             'classes': ('plugin-holder', 'plugin-holder-nopage'),
         }),
         )
     news_page_fieldset = (
-        ('Automatic news & events page', {
+        (_('Automatic news & events page'), {
             'fields': ('auto_news_page', 'news_page_menu_title',),
         }),
-        ('Text for the news & events page', {
+        (_('Text for the news & events page'), {
             'fields': ('news_page_intro',),
             'classes': ('plugin-holder', 'plugin-holder-nopage'),
         }),
         )
     vacancies_page_fieldset = (
-        ('Automatic vacancies & studentships page', {
+        (_('Automatic vacancies & studentships page'), {
             'fields': ('auto_vacancies_page', 'vacancies_page_menu_title',),
         }),
-        ('Text for the vacancies & studentships page', {
+        (_('Text for the vacancies & studentships page'), {
             'fields': ('vacancies_page_intro',),
             'classes': ('plugin-holder', 'plugin-holder-nopage'),
         }),
         )
 
     tabs = [
-        ('Basic information', {'fieldsets': (name_fieldset, fieldsets["image"], website_fieldset, entity_hierarchy_fieldset)}),
-        ('Location', {'fieldsets': (fieldsets["address_report"], building_fieldset, fieldsets["location"],)}),
-        ('Contact', {
+        (_('Basic information'), {'fieldsets': (name_fieldset, fieldsets["image"], website_fieldset, entity_hierarchy_fieldset)}),
+        (_('Location'), {'fieldsets': (fieldsets["address_report"], building_fieldset, fieldsets["location"],)}),
+        (_('Contact'), {
             'fieldsets': (fieldsets["email"],),
             'inlines': (PhoneContactInline,)
         }),
-        ('Contacts & people', {'fieldsets': contact_page_fieldset}),
-        ('News & events', {'fieldsets': news_page_fieldset}),
-        ('Vacancies & studentships', {'fieldsets': vacancies_page_fieldset}),
-        ('People', {'inlines':(MembershipForEntityInline,)}),
-        ('Advanced settings', {'fieldsets': (fieldsets["url"], fieldsets["slug"],) }),
+        (_('Contacts & people'), {'fieldsets': contact_page_fieldset}),
+        (_('News & events'), {'fieldsets': news_page_fieldset}),
+        (_('Vacancies & studentships'), {'fieldsets': vacancies_page_fieldset}),
+        (_('People'), {'inlines':(MembershipForEntityInline,)}),
+        (_('Advanced settings'), {'fieldsets': (fieldsets["url"], fieldsets["slug"],) }),
         ]
 
     if 'publications' in settings.INSTALLED_APPS:
         publications_fieldset = (
-            'Publications', {
+            _('Publications'), {
                 'fields': ('auto_publications_page', 'publications_page_menu_title',),
              }),
         tabs.append(
-            ('Publications', {'fieldsets': publications_fieldset})
+            (_('Publications'), {'fieldsets': publications_fieldset})
         )
 
 
@@ -460,12 +460,12 @@ class BuildingAdminForm(forms.ModelForm):
     def clean(self):
         super(BuildingAdminForm, self).clean()
         if self.cleaned_data["number"] and not self.cleaned_data["street"]:
-            raise forms.ValidationError("Silly. You can't have a street number but no street, can you?")
+            raise forms.ValidationError(_("Silly. You can't have a street number but no street, can you?"))
         if self.cleaned_data["additional_street_address"] and not self.cleaned_data["street"]:
             self.cleaned_data["street"] = self.cleaned_data["additional_street_address"]
             self.cleaned_data["additional_street_address"] = None
         if not (self.cleaned_data["postcode"] or self.cleaned_data["name"] or self.cleaned_data["street"]):
-            raise forms.ValidationError("That's not much of an address, is it?")
+            raise forms.ValidationError(_("That's not much of an address, is it?"))
         return self.cleaned_data
 
 
@@ -499,12 +499,12 @@ class BuildingAdmin(ModelAdminWithTabsAndCMSPlaceholder):
         }),)
     map_fieldsets = (('', {'fields': ('map', 'latitude', 'longitude', 'zoom',),}),)
     tabs = (
-        ('Address', {'fieldsets': address_fieldsets,}),
-        ('Details', {'fieldsets': details_fieldsets,}),
-        ('Description', {'fieldsets': description_fieldsets,}),
-        ('Getting here', {'fieldsets': getting_here_fieldsets,}),
-        ('Access and parking', {'fieldsets': access_and_parking_fieldsets,}),
-        ('Map', {'fieldsets': map_fieldsets,}),
+        (_('Address'), {'fieldsets': address_fieldsets,}),
+        (_('Details'), {'fieldsets': details_fieldsets,}),
+        (_('Description'), {'fieldsets': description_fieldsets,}),
+        (_('Getting here'), {'fieldsets': getting_here_fieldsets,}),
+        (_('Access and parking'), {'fieldsets': access_and_parking_fieldsets,}),
+        (_('Map'), {'fieldsets': map_fieldsets,}),
     )
 
 try:
@@ -540,8 +540,8 @@ if ENABLE_CONTACTS_AND_PEOPLE_AUTH_ADMIN_INTEGRATION:
 
     class MyNoPasswordCapableUserCreationForm(UserCreationForm):
         has_password = forms.BooleanField(
-            label="has password",
-            help_text="LDAP users don't need a password",
+            label=_("has password"),
+            help_text=_("LDAP users don't need a password"),
             required=False,
             initial=True
             )
@@ -571,8 +571,8 @@ if ENABLE_CONTACTS_AND_PEOPLE_AUTH_ADMIN_INTEGRATION:
 
     class MyNoPasswordCapableUserChangeForm(UserChangeForm):
         has_password = forms.BooleanField(
-            label="has password",
-            help_text="LDAP users don't need a password",
+            label=_("has password"),
+            help_text=_("LDAP users don't need a password"),
             required=False,
             initial=True
             )

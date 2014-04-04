@@ -27,16 +27,16 @@ def contacts_and_people(request, slug=getattr(Entity.objects.base_entity(), "slu
     template = entity.get_template()
     main_page_body_file = "contacts_and_people/entity_contacts_and_people.html"
     # meta values - title and meta
-    title = "Contact information for %s" % entity
+    title = _("Contact information for %s") % entity
     meta = {
-        "description": "Addresses, phone numbers, staff lists and other contact information",
+        "description": _("Addresses, phone numbers, staff lists and other contact information"),
         }
 
     people, initials = entity.get_people_and_initials()
 
     # only show pagetitle if there are people
     if people:
-        pagetitle = u"Contacts & people"
+        pagetitle = _("Contacts & people")
     else:
         pagetitle = u""
 
@@ -123,14 +123,14 @@ def people(request, slug=getattr(Entity.objects.base_entity(), "slug", None), le
     main_page_body_file = "includes/people_list_with_index.html"
     # meta values - title and meta
     meta = {
-        u"description": "People in %s" % entity,
+        u"description": _("People in %s") % entity,
         }
-    title = u"%s: people" % entity
+    title = _("%s: people") % entity
     # content values
     people, initials = entity.get_people_and_initials()
     if letter:
         people = entity.get_people(letter)
-        title = u"%s, people by surname: %s" % (entity, letter.upper())
+        title = _(("%s, people by surname: %s")) % (entity, letter.upper())
     return render_to_response(
         "arkestra_utilities/entity_auto_page.html",
         {

@@ -1,9 +1,9 @@
-import datetime
-from django.utils.translation import ugettext as _
-from django.shortcuts import render_to_response, get_object_or_404
+import datetime, json
+from django.utils.translation import ugettext_lazy as _
+from django.shortcuts import render_to_response, get_object_or_404, get_list_or_404
 from django.template import RequestContext
-from django.http import Http404
-
+from django.http import Http404, HttpResponse
+from django.core import serializers
 from arkestra_utilities.views import ArkestraGenericView
 
 from contacts_and_people.models import Entity
@@ -27,12 +27,12 @@ class NewsAndEventsView(ArkestraGenericView):
             )
 
         self.main_page_body_file = "arkestra/generic_lister.html"
-        self.meta = {"description": "Recent news and forthcoming events",}
-        self.title = unicode(self.entity) + u" news & events"
+        self.meta = {"description": _("Recent news and forthcoming events"),}
+        self.title = unicode(self.entity) + _(" news & events")
         if MULTIPLE_ENTITY_MODE:
-            self.pagetitle = unicode(self.entity) + u" news & events"
+            self.pagetitle = unicode(self.entity) + _(" news & events")
         else:
-            self.pagetitle = "News & events"
+            self.pagetitle = _("News & events")
 
         return self.response(request)
 
@@ -48,9 +48,9 @@ class NewsArchiveView(ArkestraGenericView):
             )
 
         self.main_page_body_file = "arkestra/generic_filter_list.html"
-        self.meta = {"description": "Searchable archive of news items",}
-        self.title = u"News archive for %s" % unicode(self.entity)
-        self.pagetitle = u"News archive for %s" % unicode(self.entity)
+        self.meta = {"description": _("Searchable archive of news items"),}
+        self.title = _("News archive for %s") % unicode(self.entity)
+        self.pagetitle = _("News archive for %s") % unicode(self.entity)
 
         return self.response(request)
 
@@ -66,9 +66,9 @@ class EventsArchiveView(ArkestraGenericView):
             )
 
         self.main_page_body_file = "arkestra/generic_filter_list.html"
-        self.meta = {"description": "Searchable archive of events",}
-        self.title = u"Events archive for %s" % unicode(self.entity)
-        self.pagetitle = u"Events archive for %s" % unicode(self.entity)
+        self.meta = {"description": _("Searchable archive of events"),}
+        self.title = _("Events archive for %s") % unicode(self.entity)
+        self.pagetitle = _("Events archive for %s") % unicode(self.entity)
 
         return self.response(request)
 
@@ -85,9 +85,9 @@ class EventsForthcomingView(ArkestraGenericView):
             )
 
         self.main_page_body_file = "arkestra/generic_filter_list.html"
-        self.meta = {"description": "Searchable list of forthcoming events",}
-        self.title = u"Forthcoming events for %s" % unicode(self.entity)
-        self.pagetitle = u"Forthcoming events for %s" % unicode(self.entity)
+        self.meta = {"description": _("Searchable list of forthcoming events"),}
+        self.title = _("Forthcoming events for %s") % unicode(self.entity)
+        self.pagetitle = _("Forthcoming events for %s") % unicode(self.entity)
 
         return self.response(request)
 

@@ -4,7 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
-
+from django.utils.translation import ugettext_lazy as _
 from cms.models import CMSPlugin, Page
 
 from filer.fields.image import FilerImageField
@@ -101,36 +101,40 @@ class BaseLink(models.Model):
     """
     All links, whether placed using the Admin Inline mechanism or as plugins, require this information
     """
-    destination_content_type = models.ForeignKey(ContentType, verbose_name="Type", related_name = "links_to_%(class)s") 
-    destination_object_id = models.PositiveIntegerField(verbose_name="Item")
+    destination_content_type = models.ForeignKey(ContentType, verbose_name=_("Type"), related_name = "links_to_%(class)s") 
+    destination_object_id = models.PositiveIntegerField(verbose_name=_("Item"))
     destination_content_object = generic.GenericForeignKey('destination_content_type', 'destination_object_id')
     
     class Meta:
         abstract = True
         ordering = ['id',]
-
+        verbose_name = _('Base Link') 
+        verbose_name_plural = _("Base Links")
 
 class Link(BaseLink, LinkMethodsMixin):
     """
     Abstract base class for link items as they appear in lists - used by ObjectLinks and links.GenericLinkListPluginItem
     """
-    include_description = models.BooleanField(help_text=u"Also display metadata")
-    text_override = models.CharField(verbose_name = "Link text, if required", 
+    include_description = models.BooleanField(help_text=_("Also display metadata"), verbose_name=_('Include description'))
+    text_override = models.CharField(verbose_name = _("Link text, if required"), 
         max_length=256, null=True, blank=True, 
-        help_text="Will override the automatic default link text")
+        help_text=_("Will override the automatic default link text"))
     description_override = models.TextField(max_length=256, null=True,
-        blank=True, help_text="Will override the automatic default description text")
+        blank=True, help_text=_("Will override the automatic default description text"), verbose_name=_('Description override'))
     heading_override = models.CharField(max_length=256, null=True, blank=True, 
-        help_text="Will override the link destination's automatic default group heading")
+        help_text=_("Will override the link destination's automatic default group heading"), 
+        verbose_name=_('Heading override'))
     metadata_override = models.CharField(max_length=256, null=True, blank=True, 
-        help_text="Override the link destination's default metadata")
+        help_text=_("Override the link destination's default metadata"),
+        verbose_name=_('Metadata override'))
     html_title_attribute = models.CharField(max_length=256, null=True, blank=True, 
-        help_text="Add an HTML <em>title</em> attribute")
-    key_link = models.BooleanField(help_text="Make this item stand out in the list")
+        help_text=_("Add an HTML <em>title</em> attribute"), verbose_name=_('HTML title attribute'))
+    key_link = models.BooleanField(help_text=_("Make this item stand out in the list"), verbose_name=_('Hey link'))
     
     class Meta:
         abstract = True
-
+        verbose_name = _('Link') 
+        verbose_name_plural = _("Links")
 
 class ObjectLink(Link):
     """
@@ -138,10 +142,10 @@ class ObjectLink(Link):
     """ 
 
     class Meta:
-        verbose_name = "Link"
+        verbose_name = _("Link")
 
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.PositiveIntegerField()
+    content_type = models.ForeignKey(ContentType, verbose_name=_('Content type'))
+    object_id = models.PositiveIntegerField(verbose_name=_('Object ID'))
     content_object = generic.GenericForeignKey('content_type', 'object_id') # the content object the link is attached to    
 
 class GenericLinkListPluginItem(ArkestraGenericPluginItemOrdering, Link):
@@ -166,17 +170,21 @@ class ExternalLink(models.Model):
     url = models.CharField(max_length=255)
     external_site = models.ForeignKey('ExternalSite', related_name="links",
         null=True, blank=True,
-        on_delete=models.PROTECT
+        on_delete=models.PROTECT,
+        verbose_name=_('External site')
         )
-    description = models.TextField(max_length=256, null=True, blank=True)
+    description = models.TextField(max_length=256, null=True, blank=True, verbose_name=_('Description'))
     kind = models.ForeignKey('LinkType', 
         blank=True, null = True, 
         on_delete=models.SET_NULL,
-        related_name='links')
+        related_name='links',
+        verbose_name=_('Kind'))
     
     class Meta:
         ordering = ['title',]
-        
+        verbose_name = _('External Link') 
+        verbose_name_plural = _("External Links")
+                
     def __unicode__(self):
         return self.title or self.url
 
@@ -213,12 +221,14 @@ class ExternalLink(models.Model):
 class LinkType(models.Model):
     scheme = models.CharField(
         max_length=50, 
-        help_text=u"e.g. 'http', 'mailto', etc",
-        unique=True
+        help_text=_("e.g. 'http', 'mailto', etc"),
+        unique=True,
+        verbose_name=_('Scheme')
         )
     name = models.CharField(
         max_length=50, 
-        help_text=u"e.g. 'Hypertext', 'email', etc"
+        help_text=_("e.g. 'Hypertext', 'email', etc"),
+        verbose_name=_('Name')
         )
     
     def __unicode__(self):
@@ -228,17 +238,17 @@ class LinkType(models.Model):
 class ExternalSite(models.Model):
     
     site = models.CharField(
-        "site name",
+        verbose_name=_("site name"),
         max_length=50,
-        help_text = u"e.g. 'BBC News', 'Welsh Assembly Goverment', etc", 
+        help_text = _("e.g. 'BBC News', 'Welsh Assembly Goverment', etc"), 
         null = True
         )
     domain = models.CharField(
-        "domain name",
+        verbose_name=_("domain name"),
         max_length=256, 
         null = True, 
         blank = True,
-        help_text = u"Do not amend unless you know what you are doing", 
+        help_text = _("Do not amend unless you know what you are doing"), 
         )
     parent = models.ForeignKey('self', 
         blank=True, 
@@ -247,7 +257,8 @@ class ExternalSite(models.Model):
         )
     
     class Meta:
-        verbose_name = "domain"
+        verbose_name = "Domain"
+        verbose_name_plural = _("Domains")
         ordering = ['domain',]
     
     def __unicode__(self):
@@ -295,14 +306,14 @@ except mptt.AlreadyRegistered:
 
 class GenericLinkListPlugin(CMSPlugin):
     INSERTION_MODES = (
-        (0, u"Inline in text"),
-        (1, u"Unordered List - <ul>"),
-        (2, u"Paragraphs - <p>"),
+        (0, _("Inline in text")),
+        (1, _("Unordered List - <ul>")),
+        (2, _("Paragraphs - <p>")),
         )
     insert_as = models.PositiveSmallIntegerField(choices = INSERTION_MODES, default = 1)
-    use_link_icons = models.BooleanField(help_text = "Place an icon on each link below (links in lists only)")
-    separator = models.CharField(help_text = "Applies to Inline links only; default is ', '", max_length=20, null = True, blank = True, default = ", ")
-    final_separator = models.CharField(help_text = "Applies to Inline links only; default is ' and '", max_length=20, null = True, blank = True, default = " and ")
+    use_link_icons = models.BooleanField(help_text = _("Place an icon on each link below (links in lists only)"), verbose_name=_('Use link icons'))
+    separator = models.CharField(help_text = _("Applies to Inline links only; default is ', '"), max_length=20, null = True, blank = True, default = ", ", verbose_name=_('Seperator'))
+    final_separator = models.CharField(help_text = _("Applies to Inline links only; default is ' and '"), max_length=20, null = True, blank = True, default = " and ", verbose_name=_('Final seperator'))
 
     def copy_relations(self, oldinstance):
         for plugin_item in oldinstance.links_item.all():
@@ -317,7 +328,7 @@ class CarouselPlugin(CMSPlugin):
     The carousel inserted into a Page
     """
     CAROUSEL_WIDTHS = (
-        (u'Widths relative to the containing column', (
+        (_('Widths relative to the containing column'), (
             (100.0, u"100%"),
             (75.0, u"75%"),
             (66.7, u"66%"),
@@ -326,13 +337,13 @@ class CarouselPlugin(CMSPlugin):
             (25.0, u"25%"),
             )
         ),
-        ('Deprecated - do not use', (
-            (1.0, u'Full'),
-            (1.33, u'Three-quarters of the page'),
-            (1.5, u'Two-thirds of the page'),
-            (2.0, u'Half of the page'),
-            (3.0, u'One-third of the page'),
-            (4.0, u'One-quarter of the page'),
+        (_('Deprecated - do not use'), (
+            (1.0, _('Full')),
+            (1.33, _('Three-quarters of the page')),
+            (1.5, _('Two-thirds of the page')),
+            (2.0, _('Half of the page')),
+            (3.0, _('One-third of the page')),
+            (4.0, _('One-quarter of the page')),
             )
         ),
     )
@@ -346,10 +357,11 @@ class CarouselPlugin(CMSPlugin):
         (.667, u'2x3'),
     )
 
-    name = models.CharField(max_length=50)
-    width = models.FloatField(choices=CAROUSEL_WIDTHS, default=100.0)
+    name = models.CharField(max_length=50, verbose_name=_('Name'))
+    width = models.FloatField(choices=CAROUSEL_WIDTHS, default=100.0, verbose_name=_('Width'))
     aspect_ratio = models.FloatField(null=True, blank=True,
-         choices=ASPECT_RATIOS, default=1.5)
+         choices=ASPECT_RATIOS, default=1.5, 
+         verbose_name=_('Aspect ratio'))
     #height = models.PositiveIntegerField(null=True, blank=True)
 
     def copy_relations(self, oldinstance):
@@ -364,9 +376,9 @@ class CarouselPluginItem(BaseLink, LinkMethodsMixin, ArkestraGenericPluginItemOr
     """
     The item in a carousel - basically a Link, with an image
     """
-    plugin = models.ForeignKey(CarouselPlugin, related_name="carousel_item")
-    image = FilerImageField()
-    link_title = models.CharField(max_length=35)    
+    plugin = models.ForeignKey(CarouselPlugin, related_name="carousel_item", verbose_name=_('Plugin'))
+    image = FilerImageField(verbose_name=_('Image'))
+    link_title = models.CharField(max_length=35, verbose_name=_('Link title'))    
 
     class Meta:
         ordering = ['inline_item_ordering', 'id',]
@@ -382,11 +394,11 @@ class FocusOnPluginEditor(CMSPlugin):
 
 
 class FocusOnPluginItemEditor(LinkMethodsMixin, BaseLink):
-    plugin = models.ForeignKey(FocusOnPluginEditor, related_name="focuson_item")
+    plugin = models.ForeignKey(FocusOnPluginEditor, related_name="focuson_item", verbose_name=_('Plugin'))
     text_override = models.CharField(max_length=256, null=True, blank=True, 
-        help_text="Override the default link text")
+        help_text=_("Override the default link text"), verbose_name=_('Text override'))
     short_text_override = models.CharField(max_length=256, null=True, blank=True, 
-        help_text="Override the default Focus on title text")
+        help_text=_("Override the default Focus on title text"), verbose_name=_('Short text override'))
     description_override = models.TextField(max_length=256, null=True, blank=True, 
-        help_text = "Override the item's default description")
+        help_text = _("Override the item's default description"), verbose_name=_('Description override'))
     image_override = FilerImageField(blank=True, null=True,)

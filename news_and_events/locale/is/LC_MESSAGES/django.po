@@ -8,45 +8,574 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-24 16:48+0000\n"
+"POT-Creation-Date: 2014-02-22 13:20+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: cms_plugins.py:25
+#: admin.py:73 admin.py:222
+msgid "Basic"
+msgstr ""
+
+#: admin.py:74 admin.py:223
+msgid "Date & significance"
+msgstr ""
+
+#: admin.py:75 admin.py:231
+msgid "Body"
+msgstr ""
+
+#: admin.py:76 admin.py:232
+msgid "Where to Publish"
+msgstr ""
+
+#: admin.py:77
+msgid "Related people"
+msgstr ""
+
+#: admin.py:78 admin.py:234
+msgid "Links"
+msgstr ""
+
+#: admin.py:79 admin.py:235
+#, fuzzy
+msgid "Advanced Options"
+msgstr "aðgerðir"
+
+#: admin.py:104
+msgid "You didn't say, but I am guessing that this is a single-day event on "
+msgstr ""
+
+#: admin.py:107
+msgid ""
+"I'm terribly sorry, I can't work out when this event is supposed to start. "
+"You'll have to enter that information yourself."
+msgstr ""
+
+#: admin.py:115
+msgid ""
+"An event with a start date can't also be a series of events. Please correct "
+"this."
+msgstr ""
+
+#: admin.py:120
+msgid ""
+"You didn't enter an end date, so I have assumed this is a single-day event"
+msgstr ""
+
+#: admin.py:124
+msgid ""
+"This event appears to end before it starts, which is very silly. Please "
+"correct the dates."
+msgstr ""
+
+#: admin.py:127
+msgid ""
+"You didn't enter a start time, so I deleted the end time. I hope that's OK."
+msgstr ""
+
+#: admin.py:133
+msgid "You have a lovely smile."
+msgstr ""
+
+#: admin.py:137
+msgid ""
+"This event appears to end before it starts, which is very silly. Please "
+"correct the times."
+msgstr ""
+
+#: admin.py:148
+msgid ""
+"You didn't enter a start date, so I will assume this is a series of events."
+msgstr ""
+
+#: admin.py:169
+msgid "actual/series"
+msgstr ""
+
+#: admin.py:174
+msgid "Actual"
+msgstr ""
+
+#: admin.py:175 models.py:296
+msgid "Series"
+msgstr ""
+
+#: admin.py:209 models.py:104
+msgid "Type"
+msgstr ""
+
+#: admin.py:210 models.py:150
+msgid "Building"
+msgstr ""
+
+#: admin.py:211
+msgid "When"
+msgstr ""
+
+#: admin.py:213 admin.py:230
+msgid "Parent & children"
+msgstr ""
+
+#: admin.py:215
+msgid "When displaying the children of this item in lists"
+msgstr ""
+
+#: admin.py:218 models.py:159 templates/includes/details.html:42
+msgid "Registration enquiries"
+msgstr ""
+
+#: admin.py:219
+msgid "Featured people"
+msgstr ""
+
+#: admin.py:220
+msgid "How this item should behave in lists"
+msgstr ""
+
+#: admin.py:229 templates/includes/details.html:66
+#, fuzzy
+msgid "Location"
+msgstr "aðgerðir"
+
+#: admin.py:233
+msgid "People"
+msgstr ""
+
+#: cms_plugins.py:27 views.py:35
 msgid "News & events"
 msgstr "Fréttir og viðburðir"
 
-#: models.py:268
-msgid " to "
-msgstr " - "
+#: feeds.py:40
+#, python-format
+msgid "News relevant for the entity \"%s\""
+msgstr ""
 
-#: models.py:376
+#: feeds.py:61
+#, python-format
+msgid "News with the contact \"%s\""
+msgstr ""
+
+#: feeds.py:82
+#, python-format
+msgid "News with the the related person \"%s\""
+msgstr ""
+
+#: lister.py:22 models.py:415
 msgid "News"
 msgstr "Fréttir"
 
-#: models.py:377
+#: lister.py:186 models.py:165 models.py:416
 msgid "Events"
 msgstr "Viðburðir"
 
-#: templates/admin/news_and_events/event/change_list.html:43
-msgid "Successfully moved"
-msgstr "Tókst að færa"
+#: mixins.py:12
+msgid "News archive"
+msgstr ""
 
-#: templates/admin/news_and_events/event/change_list.html:67
-#, python-format
-msgid "Add %(name)s"
-msgstr "Bæta við %(name)s"
+#: mixins.py:25 mixins.py:40
+msgid "All forthcoming events"
+msgstr ""
 
-#: templates/admin/news_and_events/event/change_list_tree.html:6
-msgid "title"
+#: mixins.py:31
+#, fuzzy
+msgid "Previous events"
+msgstr "Fréttir og viðburðir"
+
+#: models.py:39
+msgid "Not used or required for external items"
+msgstr ""
+
+#: models.py:40
+msgid "Content"
+msgstr ""
+
+#: models.py:44
+#, fuzzy
+msgid "New and Event"
+msgstr "Fréttir og viðburðir"
+
+#: models.py:45
+#, fuzzy
+msgid "News and Events"
+msgstr "Fréttir og viðburðir"
+
+#: models.py:60
+msgid "Dateline for the item (the item will not be published until then"
+msgstr ""
+
+#: models.py:61
+msgid "Date"
+msgstr ""
+
+#: models.py:63
+msgid "Important news; it won't expire from news lists"
+msgstr ""
+
+#: models.py:64
+msgid "Display Indefinitely"
+msgstr ""
+
+#: models.py:66
+msgid "If this news item is from an external source"
+msgstr ""
+
+#: models.py:67
+msgid "External news source"
+msgstr ""
+
+#: models.py:68
+msgid "Featured until"
+msgstr ""
+
+#: models.py:70
+msgid "Will remain a featured item until this date"
+msgstr ""
+
+#: models.py:71
+msgid "Featured everywhere"
+msgstr ""
+
+#: models.py:72
+msgid "Will be featured in other entities's news lists"
+msgstr ""
+
+#: models.py:76
+msgid "News Article"
+msgstr ""
+
+#: models.py:77
+msgid "News Articles"
+msgstr ""
+
+#: models.py:93
+msgid "Top news"
+msgstr ""
+
+#: models.py:107
+msgid ""
+"The speakers, lecturers, instructors or other people featured in this event"
+msgstr ""
+
+#: models.py:108
+msgid "Featuring"
+msgstr ""
+
+#: models.py:113 models.py:379
+msgid "Parent"
+msgstr ""
+
+#: models.py:115
+msgid "an actual event"
+msgstr ""
+
+#: models.py:116
+#, fuzzy
+msgid "a series of events"
+msgstr "Fréttir og viðburðir"
+
+#: models.py:118
+msgid "This is"
+msgstr ""
+
+#: models.py:120
+msgid "show title of series followed by title of children"
+msgstr ""
+
+#: models.py:121
+msgid "show title of series only"
+msgstr ""
+
+#: models.py:122
+msgid "show title of children only"
+msgstr ""
+
+#: models.py:124
+#, fuzzy
+msgid "Titles"
 msgstr "titill"
 
-#: templates/admin/news_and_events/event/change_list_tree.html:8
-msgid "actions"
-msgstr "aðgerðir"
+#: models.py:130
+msgid "display children's summaries"
+msgstr ""
+
+#: models.py:131
+msgid "display the summary for the series"
+msgstr ""
+
+#: models.py:133
+msgid "Summaries"
+msgstr ""
+
+#: models.py:138
+msgid "e.g. Conference sessions; Lectures in this series"
+msgstr ""
+
+#: models.py:139
+msgid "Child list heading"
+msgstr ""
+
+#: models.py:140
+msgid "Start date"
+msgstr ""
+
+#: models.py:142
+msgid "Not required for a series of events"
+msgstr ""
+
+#: models.py:143
+msgid "Start time"
+msgstr ""
+
+#: models.py:144
+msgid "End date"
+msgstr ""
+
+#: models.py:145
+msgid "End time"
+msgstr ""
+
+#: models.py:146
+msgid "Single day event"
+msgstr ""
+
+#: models.py:152
+msgid "Will become a featured item on this date"
+msgstr ""
+
+#: models.py:153
+msgid "Jumps queue on"
+msgstr ""
+
+#: models.py:154
+msgid "Jums queue everywhere"
+msgstr ""
+
+#: models.py:158
+msgid ""
+"The people who responsible for registration, if different from those in "
+"<em>Please contact</em>"
+msgstr ""
+
+#: models.py:164
+#, fuzzy
+msgid "Event"
+msgstr "Viðburðir"
+
+#: models.py:293
+msgid " to "
+msgstr " - "
+
+#: models.py:354
+#, fuzzy
+msgid "Top events"
+msgstr "Viðburðir"
+
+#: models.py:370
+msgid "Regular events"
+msgstr ""
+
+#: models.py:380
+#, fuzzy
+msgid "Event type"
+msgstr "Viðburðir"
+
+#: models.py:383
+#, fuzzy
+msgid "Event Type"
+msgstr "Viðburðir"
+
+#: models.py:384
+#, fuzzy
+msgid "Event Types"
+msgstr "Viðburðir"
+
+#: models.py:393
+msgid "News Source"
+msgstr ""
+
+#: models.py:394
+msgid "News Sources"
+msgstr ""
+
+#: models.py:409
+#, fuzzy
+msgid "News and events"
+msgstr "Fréttir og viðburðir"
+
+#: models.py:410
+#, fuzzy
+msgid "News only"
+msgstr "Fréttir"
+
+#: models.py:411
+#, fuzzy
+msgid "Events only"
+msgstr "Viðburðir"
+
+#: models.py:413
+msgid "Show"
+msgstr ""
+
+#: models.py:414
+msgid "Show previous events"
+msgstr ""
+
+#: models.py:415
+msgid "News heading text"
+msgstr ""
+
+#: models.py:416
+msgid "Events heading text"
+msgstr ""
+
+#: models.py:423
+msgid "Show date filter"
+msgstr ""
+
+#: models.py:424
+msgid "Show importance filter"
+msgstr ""
+
+#: models.py:425
+msgid "Show categories"
+msgstr ""
+
+#: models.py:436
+#, fuzzy
+msgid "News and Events plugin"
+msgstr "Fréttir og viðburðir"
+
+#: models.py:437
+#, fuzzy
+msgid "News and Events plugins"
+msgstr "Fréttir og viðburðir"
+
+#: views.py:30
+msgid "Recent news and forthcoming events"
+msgstr ""
+
+#: views.py:31 views.py:33
+#, fuzzy
+msgid " news & events"
+msgstr "Fréttir og viðburðir"
+
+#: views.py:51
+msgid "Searchable archive of news items"
+msgstr ""
+
+#: views.py:52 views.py:53
+#, python-format
+msgid "News archive for %s"
+msgstr ""
+
+#: views.py:69
+msgid "Searchable archive of events"
+msgstr ""
+
+#: views.py:70 views.py:71
+#, python-format
+msgid "Events archive for %s"
+msgstr ""
+
+#: views.py:88
+msgid "Searchable list of forthcoming events"
+msgstr ""
+
+#: views.py:89 views.py:90
+#, python-format
+msgid "Forthcoming events for %s"
+msgstr ""
+
+#: templates/includes/children.html:7
+msgid "Sessions"
+msgstr ""
+
+#: templates/includes/children.html:33
+msgid "Previous"
+msgstr ""
+
+#: templates/includes/children.html:35
+msgid "Previous sessions"
+msgstr ""
+
+#: templates/includes/details.html:6 templates/includes/details.html.py:9
+msgid "Part of the"
+msgstr ""
+
+#: templates/includes/details.html:6
+msgid "series"
+msgstr ""
+
+#: templates/includes/details.html:16
+msgid "With"
+msgstr ""
+
+#: templates/includes/details.html:25
+msgid "Hosted by"
+msgstr ""
+
+#: templates/includes/details.html:34
+#: templates/news_and_events/newsarticle.html:37
+msgid "General enquiries"
+msgstr ""
+
+#: templates/includes/details.html:50
+msgid "Venue"
+msgstr ""
+
+#: templates/includes/details.html:58
+msgid "map &amp; directions"
+msgstr ""
+
+#: templates/includes/details.html:70
+msgid "Note"
+msgstr ""
+
+#: templates/news_and_events/event.html:51
+#: templates/news_and_events/newsarticle.html:49
+msgid "More"
+msgstr ""
+
+#: templates/news_and_events/event.html:51
+#, fuzzy
+msgid "events"
+msgstr "Viðburðir"
+
+#: templates/news_and_events/event_list_item.html:72
+msgid "Venue:"
+msgstr ""
+
+#: templates/news_and_events/news.html:11
+#, fuzzy
+msgid "News for"
+msgstr "Fréttir"
+
+#: templates/news_and_events/newsarticle.html:34
+msgid "Published"
+msgstr ""
+
+#: templates/news_and_events/newsarticle.html:49
+#, fuzzy
+msgid "news"
+msgstr "Fréttir"
+
+#: templates/news_and_events/feeds/entry_description.html:2
+msgid "the desc:"
+msgstr ""
+
+#: templates/news_and_events/feeds/entry_title.html:2
+#, fuzzy
+msgid "the title:"
+msgstr "titill"
+
+#~ msgid "Successfully moved"
+#~ msgstr "Tókst að færa"
+
+#~ msgid "Add %(name)s"
+#~ msgstr "Bæta við %(name)s"

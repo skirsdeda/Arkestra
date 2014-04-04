@@ -2,7 +2,7 @@
 #print "LOADING link_schemas.py for %s" % __name__
 
 from django.conf import settings
-
+from django.utils.translation import ugettext_lazy as _
 from links import models, admin
 from links import schema, LinkWrapper
 
@@ -41,7 +41,7 @@ if 'cms' in settings.INSTALLED_APPS:
             r.append(self.obj.get_menu_title())
             return u" &raquo; ".join(r)
         def heading(self):
-            return "Related pages"
+            return _("Related pages")
     schema.register_wrapper(Page, PageLinkWrapper)
 
 if 'filer' in settings.INSTALLED_APPS:
@@ -57,7 +57,7 @@ if 'filer' in settings.INSTALLED_APPS:
             # warn the user if the item lacks a Name field
             if not self.obj.name:
                 item = self.obj.label
-                return "%s <span class='errornote'>This Filer item has an empty <strong>Name</strong> field. If you are responsible for this item, please provide a proper name for it."  % item
+                return _("%s <span class='errornote'>This Filer item has an empty <strong>Name</strong> field. If you are responsible for this item, please provide a proper name for it.")  % item
             # otherwise, return its name
             else:
                 return self.obj.name
@@ -91,7 +91,7 @@ if 'filer' in settings.INSTALLED_APPS:
 
             # no file name? warn
             if not file.name:
-                errors.append("missing Name field")
+                errors.append(_("missing Name field"))
                             
             # errors? list them all together
             if errors:
@@ -105,13 +105,13 @@ if 'filer' in settings.INSTALLED_APPS:
             
             # build the description
             description = u"%s<br /><em>Folder:</em> %s<br />%s %s" % (
-                 filetype, folder_path, file.description or "No description available", error_message
+                 filetype, folder_path, file.description or _("No description available"), error_message
                 )
             
             return description
                     
         def heading(self):
-            return u"Files"    
+            return _("Files")    
             
     schema.register_wrapper(File, FileLinkWrapper)
     

@@ -3,7 +3,7 @@ This module will try to clean up the external links database
 """
 
 from links.models import ExternalLink, ObjectLink, GenericLinkListPluginItem, LinkType, ExternalSite
-
+from django.utils.translation import ugettext_lazy as _
 # from cms.models import Placeholder
 # from cms.models.pluginmodel import CMSPlugin
 # from cms.plugins.text.models import Text
@@ -48,7 +48,7 @@ def tidy_links(action = "dryrun"):
 
 def de_duplicate_links(execute):
     # a message to summarise state
-    summary = "Everything seems in order, no action required"
+    summary = _("Everything seems in order, no action required")
         
     # find out what link.kinds are permissible
     permissible_kinds = LinkType.objects.all()
@@ -274,12 +274,12 @@ def convert_url_fields(execute):
                 try:
                     getattr(actual_model, new_field)
                 except AttributeError:
-                    message = "field " + new_field + " is missing - check the model and try agin"
+                    message = _("field ") + new_field + _(" is missing - check the model and try agin")
                     messages.append(message)
 
 
             if not messages:
-                message = "Checked " + str(actual_model.objects.count()) + " items"
+                message = _("Checked ") + str(actual_model.objects.count()) + _(" items")
                 items_to_convert =[]
                 messages.append(message)
                 
@@ -303,13 +303,13 @@ def convert_url_fields(execute):
                             setattr(item, url_field, "")
                             item.save()
                             if created:
-                                message = "Created new link: " + url_field_content
+                                message = _("Created new link: ") + url_field_content
                                 messages.append(message)
                         else:
                             matches = ExternalLink.objects.filter(url=url_field_content).count()
-                            message = "Need to create new link: " + url_field_content, matches
+                            message = _("Need to create new link: ") + url_field_content, matches
                             messages.append(message)
-                message = "Items requiring conversion: " + str(len(items_to_convert))
+                message = _("Items requiring conversion: ") + str(len(items_to_convert))
                 messages.insert(1, message)                    
             models_dictionary["modules"][module]["models"][model]["messages"]=messages
                 

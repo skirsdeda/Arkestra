@@ -1,5 +1,5 @@
 {% extends newsarticle.get_template %}
-{% load arkestra_date_tags typogrify_tags humanize thumbnail placeholder_tags %}
+{% load arkestra_date_tags typogrify_tags humanize thumbnail placeholder_tags i18n %}
 
 {% block title %}
 	<title>{{ newsarticle }}</title>
@@ -31,10 +31,10 @@
 				    {% if image %}<div><img src="{{ image.url }}" /></div>{% endif %}
 				{% endblock image %}				
 				<dl class="not-indented">
-					<dt>Published</dt>
+					<dt>{% trans 'Published' %}</dt>
 					<dd>{% date newsarticle.date %}</dd>
 					{% if newsarticle.please_contact.all %}
-	 				    <dt>General enquiries</dt>
+	 				    <dt>{% trans 'General enquiries' %}</dt>
 	 				    {% for person in newsarticle.please_contact.all %}
 							<dd><a href = "{{ person.get_absolute_url }}">{{ person }}</a></dd>
 						{% endfor %}
@@ -46,7 +46,7 @@
 			</div>
 		</div>
 		<ul class = "news icons">
-			<li><a href = "{{ newsarticle.link_to_more }}">More {{ newsarticle.hosted_by.short_name }} news</a></li>
+			<li><a href = "{{ newsarticle.link_to_more }}">{% trans 'More' %} {{ newsarticle.hosted_by.short_name }} {% trans 'news' %}</a></li>
 		</ul>
 	{% endwith %}
 {% endblock main_page_body %}

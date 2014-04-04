@@ -1,13 +1,14 @@
 {% extends "arkestra_utilities/entity_auto_page.html" %}
 {% load news_and_events_tags %}
 {% load thumbnail %}
+{% load i18n %}
 
 {% block meta %}
 	<meta name="description" content="News articles"/>
 {% endblock meta %}
 
 {% block title %}
-	<title>News for {{ entity }}</title>
+	<title>{% trans 'News for' %} {{ entity }}</title>
 {% endblock %}
 
 {% block arkestra_content %}

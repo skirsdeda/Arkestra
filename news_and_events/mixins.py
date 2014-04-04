@@ -1,4 +1,5 @@
 from models import NewsArticle, Event
+from django.utils.translation import ugettext_lazy as _
 
 class NewsAndEventsPluginMixin(object):
     def news_style_other_links(self, instance, this_list):
@@ -8,7 +9,7 @@ class NewsAndEventsPluginMixin(object):
             if instance.limit_to and all_items_count > instance.limit_to:
                 this_list["other_items"] = [{
                     "link":instance.entity.get_auto_page_url("news-archive"), 
-                    "title":"News archive",
+                    "title":_("News archive"),
                     "count": all_items_count,}]
             return this_list
             
@@ -21,13 +22,13 @@ class NewsAndEventsPluginMixin(object):
                     if instance.forthcoming_events.count() > instance.limit_to:
                         this_list["other_items"].append({
                             "link":instance.entity.get_auto_page_url("forthcoming-events"), 
-                            "title":"All forthcoming events", 
+                            "title":_("All forthcoming events"), 
                             "count": instance.forthcoming_events.count(),}
                             )
             if instance.previous_events:
                 this_list["other_items"].append({
                     "link":instance.entity.get_auto_page_url("previous-events"), 
-                    "title":"Previous events",
+                    "title":_("Previous events"),
                     "count": instance.previous_events.count(),}
                     )    
                 
@@ -36,7 +37,7 @@ class NewsAndEventsPluginMixin(object):
             if instance.forthcoming_events:
                 this_list["other_items"] = [{
                     "link":instance.entity.get_auto_page_url("forthcoming-events"), 
-                    "title":"All forthcoming events", 
+                    "title":_("All forthcoming events"), 
                     "count": instance.forthcoming_events.count(),}]                
         return this_list
 

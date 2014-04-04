@@ -368,7 +368,7 @@ class NewsAndEventsPluginLister(ArkestraGenericLister):
         ]
 
     def other_items(self):
-        link = self.entity.get_auto_page_url(menu.menu_dict["url_attribute"])
+    	link = self.entity.get_auto_page_url(menu.menu_dict["url_attribute"])
         return [{
             "link": link,
             "title": "More %s" % self.display,

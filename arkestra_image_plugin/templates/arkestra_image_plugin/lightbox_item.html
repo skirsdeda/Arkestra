@@ -1,4 +1,5 @@
 {% spaceless %}
+{% load i18n %}
 <div style="width: {{ imageset_item.width}}px;" class="imageset imageset-item">
 	{% if imageset_item.image_title %}<span class="imageset-item-data image-title text">{{ imageset_item.image_title }}</span>{% endif %}
 	{% if imageset_item.image_caption %}<span class="imageset-item-data image-caption text">{{ imageset_item.image_caption }}</span>{% endif %}
@@ -16,7 +17,7 @@
 			{% endif %}
    	        {% if imageset_item.link_description %}<span class="link-description text">{{ imageset_item.link_description }}</span>{% endif %}
 			<a href="{{ imageset_item.url }}">
-				<span class="more-information">Read more<span class="hide"> about {{ imageset_item.link_title|default:imageset_item.text }}</span>...</span>
+				<span class="more-information">{% trans 'Read more' %}<span class="hide"> {% trans 'about' %} {{ imageset_item.link_title|default:imageset_item.text }}</span>...</span>
 	        </a>
 		</div>
     {% endif %}

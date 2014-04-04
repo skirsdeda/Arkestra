@@ -153,9 +153,11 @@ class InputURLMixin(forms.ModelForm):
 
     input_url = forms.CharField(
         max_length=255, required=False,
-        help_text=u"""
-            <strong>External URL</strong> not found above? Enter a new one.""",
+        help_text=_("""
+            <strong>External URL</strong> not found above? Enter a new one."""),
         )
+
+
 
 
 class GenericModelForm(InputURLMixin):
@@ -169,10 +171,10 @@ class GenericModelForm(InputURLMixin):
         if not self.cleaned_data["short_title"] and \
                 self.cleaned_data.get("title"):
             if len(self.cleaned_data["title"]) > 70:
-                raise forms.ValidationError("""
+                raise forms.ValidationError(_("""
                     Please provide a short (less than 70 characters) version
                     of the Title for the Short title field.
-                    """)
+                    """))
             else:
                 self.cleaned_data["short_title"] = self.cleaned_data["title"]
 
@@ -189,17 +191,17 @@ class GenericModelForm(InputURLMixin):
         # misc checks
         if not self.cleaned_data["external_url"]:
             if not self.cleaned_data["hosted_by"]:
-                raise forms.ValidationError("""
+                raise forms.ValidationError(_("""
                     A Host is required except for items on external websites -
                     please provide either a Host or an External URL
-                    """)
+                    """))
             # must have body or url in order to be published
             if not self.instance and self.instance.body.cmsplugin_set.all():
             # if not self.cleaned_data["body"]:
-                message = u"""
+                message = _("""
                     This will not be published until either an external URL or
                     Plugin has been added. Perhaps you ought to do that now.
-                    """
+                    """)
                 messages.add_message(self.request, messages.WARNING, message)
 
         return self.cleaned_data

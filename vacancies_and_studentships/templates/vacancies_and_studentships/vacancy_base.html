@@ -1,5 +1,5 @@
 {% extends vacancy.get_template %}
-{% load humanize typogrify_tags arkestra_date_tags thumbnail placeholder_tags %}
+{% load humanize typogrify_tags arkestra_date_tags thumbnail placeholder_tags i18n %}
 
 {% block title %}
 	<title>Vacancy ({{ vacancy.hosted_by.short_name }}): {{ vacancy }}</title>
@@ -9,7 +9,7 @@
 {% endblock nav_local %}
 
 {% block pagetitle %}
-	<h{{PAGE_TITLE_HEADING_LEVEL}}>Vacancy: {{ vacancy }}</h{{PAGE_TITLE_HEADING_LEVEL}}>
+	<h{{PAGE_TITLE_HEADING_LEVEL}}>{% trans 'Vacancy:' %} {{ vacancy }}</h{{PAGE_TITLE_HEADING_LEVEL}}>
 
    		<p class= "subtitle"><strong>{{ vacancy.summary }}</strong></p>
 {% endblock pagetitle %}
@@ -29,17 +29,17 @@
 				    {% if image %}<div><img src="{{ image.url }}" /></div>{% endif %}
 				{% endblock image %}				
 				<dl class="not-indented"> {% if vacancy.hosted_by %}
-    				    <dt>Where</dt>
+    				    <dt>{% trans 'Where' %}</dt>
     				    <dd><a href="{{ vacancy.hosted_by.get_absolute_url }}">{{ vacancy.hosted_by.short_name }}</a></dd>
 				    {% endif %}
-					<dt>Closing date</dt>
+					<dt>{% trans 'Closing date' %}</dt>
 					<dd>{% date vacancy.date %}</dd>
 				    {% if vacancy.salary %}
-						<dt>Salary</dt>
+						<dt>{% trans 'Salary' %}</dt>
 						<dd>{{ vacancy.salary }}</dd>
 					{% endif %}
 					{% if vacancy.enquiries.all %}
-	 				    <dt>General enquiries</dt>
+	 				    <dt>{% trans 'General enquiries' %}</dt>
 	 				    {% for person in vacancy.enquiries.all %}
 							<dd><a href = "{{ person.get_absolute_url }}">{{ person }}</a></dd>
 						{% endfor %}
@@ -51,7 +51,7 @@
 			</div>
 		</div>
 		<ul class = "news icons">
-			<li><a href = "{{ vacancy.link_to_vacancies_and_studentships_page }}">More {{ vacancy.hosted_by.short_name }} vacancies</a></li>
+			<li><a href = "{{ vacancy.link_to_vacancies_and_studentships_page }}">{% trans 'More' %} {{ vacancy.hosted_by.short_name }} {% trans 'vacancies' %}</a></li>
 		</ul>
     {% endblock arkestra_content %}
 {% endblock main_page_body %}

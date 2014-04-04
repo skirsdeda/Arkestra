@@ -1,5 +1,5 @@
 {% extends template %}
-{% load thumbnail news_and_events_tags typogrify_tags placeholder_tags %}
+{% load thumbnail news_and_events_tags typogrify_tags placeholder_tags i18n %}
 
 {% block title %}
 	<title>{{ place.identifier }}</title>
@@ -23,14 +23,14 @@
     		<div class="column firstcolumn">
 				<p class="subtitle">{{ place.summary|typogrify }}</p>
 	 		    {% if place.postcode or place.street %}
-	       			<h2>Address</h2>
+	       			<h2>{% trans 'Address' %}</h2>
         		    {{ place.get_postal_address|join:"<br />" }}
                     {% if place.map %}
                     	<br />
                     	<span class="image imageset map">
                     		<a href="{{ place.get_absolute_url }}map/">
                     			<img alt="map" src="http://maps.googleapis.com/maps/api/staticmap?center={{ place.latitude }},{{ place.longitude }}&zoom={{ place.zoom|add:"-4" }}&size={{ place_map_size }}&markers=color:red|{{ place.latitude }},{{ place.longitude }}&sensor=false" />
-                    			<span class="imageset-item-data image-title text">map &amp; directions</span>
+                    			<span class="imageset-item-data image-title text">{% trans 'map &amp; directions' %}</span>
                     			<span class="link-arrow"></span>
                     		</a>
                         </span>

@@ -25,19 +25,23 @@ from arkestra_utilities.settings import (
     DEFAULT_PUBLICATIONS_PAGE_TITLE
     )
 
+from django.utils.translation import ugettext_lazy as _
+
 import news_and_events
 
 
 class Site(models.Model):
     """Maintains a list of an institution's geographical sites"""
-    site_name = models.CharField(max_length=50, unique=True)
-    post_town = models.CharField(max_length=50)
-    country = models.CharField(max_length=50)
-    description = models.TextField(max_length=500, null=True, blank=True)
+    site_name = models.CharField(max_length=50, unique=True, verbose_name=_('Site name'))
+    post_town = models.CharField(max_length=50, verbose_name=_('Post town'))
+    country = models.CharField(max_length=50, verbose_name=_('Country'))
+    description = models.TextField(max_length=500, null=True, blank=True, verbose_name=_('Description'))
 
     class Meta:
         ordering = ('country', 'site_name', 'post_town')
-
+        verbose_name = _('Site')
+        verbose_name_plural = _('Sites') 
+ 
     def __unicode__(self):
         return self.site_name
 
@@ -59,61 +63,62 @@ class BuildingManager(models.Manager):
 class Building(models.Model):
     # the Building model should really be named Place
     objects = BuildingManager()
-    name = models.CharField(max_length=100, null=True, blank=True)
-    number = models.CharField(max_length=10, blank=True)
+    name = models.CharField(max_length=100, null=True, blank=True, verbose_name=_('Name'))
+    number = models.CharField(max_length=10, blank=True, verbose_name=_('Number'))
     street = models.CharField(
-        "Street name", max_length=100,
+        verbose_name=_("Street name"), max_length=100,
         blank=True
         )
     additional_street_address = models.CharField(
-        help_text=u"If required",
-        max_length=100, null=True, blank=True)
-    postcode = models.CharField(max_length=9, null=True, blank=True)
+        help_text=_("If required"),
+        max_length=100, null=True, blank=True, verbose_name=_('Additional street address'))
+    postcode = models.CharField(max_length=9, null=True, blank=True, verbose_name=_('Postcode'))
     site = models.ForeignKey(
-        Site, on_delete=models.PROTECT, related_name="place"
+        Site, on_delete=models.PROTECT, related_name="place", verbose_name=_('Site'),
         )
     slug = models.SlugField(
         blank=True,
-        help_text=u"Leave blank to regenerate; amend only if required",
-        max_length=255, null=True, unique=True)
+        help_text=_("Leave blank to regenerate; amend only if required"),
+        max_length=255, null=True, unique=True, 
+        verbose_name=_('Slug'))
     image = FilerImageField(
         on_delete=models.SET_NULL,
-        null=True, blank=True
+        null=True, blank=True,
+        verbose_name=_('Image'),
         )
     # for the place page
     summary = models.TextField(
-        verbose_name="Summary",
+        verbose_name=_("Summary"),
         max_length=256,
         default="",
-        help_text="A very short description (maximum two lines)",
+        help_text=_("A very short description (maximum two lines)")
         )
-    description = PlaceholderField(
-        'body', related_name="building_description",
-        help_text="A fuller description"
-        )
-    getting_here = PlaceholderField(
-        'simple',
+    description = PlaceholderField('body', related_name="building_description",
+        help_text=_("A fuller description"),
+        verbose_name=_('Description'))
+    getting_here = PlaceholderField('simple', 
         related_name="getting_here",
-        help_text="How to get here"
-        )
-    access_and_parking = PlaceholderField(
-        'simple',
+        help_text=_("How to get here"), 
+        verbose_name=_('Getting here'))
+    access_and_parking = PlaceholderField('simple', 
         related_name="building_access_and_parking",
-        help_text="Where to park, how to get in, etc"
-        )
-    map = models.BooleanField(
-        "Show map", default=False,
-        help_text="Use Google Maps to <a target='_blank' \
+        help_text=_("Where to park, how to get in, etc"), 
+        verbose_name=_('Access and Parking'))
+    map = models.BooleanField(_("Show map"), 
+        default=False, 
+        help_text = _("Use Google Maps to <a target='_blank' \
         style='text-decoration: underline;' \
         href='http://universimmedia.pagesperso-orange.fr/geo/loc.htm'>look up\
-        Latitude & Longitude</a>")
-    latitude = models.FloatField(null=True, blank=True)
-    longitude = models.FloatField(null=True, blank=True)
-    zoom = models.IntegerField(blank=True, null=True, default=17)
+        Latitude & Longitude</a>"))
+    latitude = models.FloatField(null=True, blank=True, verbose_name=_('Latitude'))
+    longitude = models.FloatField(null=True, blank=True, verbose_name=_('Longitude'))
+    zoom = models.IntegerField(blank=True, null=True, default=17, verbose_name=_('Zoom'))
 
     class Meta:
         ordering = ('site', 'street', 'number', 'name',)
-
+        verbose_name = _('Building')
+        verbose_name_plural = _('Buildings') 
+        
     def identifier(self):
         """
         A text-friendly way of referring to a building
@@ -191,26 +196,28 @@ class Building(models.Model):
 class PhoneContact(models.Model):
     LABEL_CHOICES = (
         ('', '-----'),
-        ('Office', 'Office'),
-        ('Laboratory', 'Laboratory'),
-        ('Mobile', 'Mobile'),
-        ('Fax', 'Fax'),
-        ('Out of hours', 'Out of hours'),
-        ('Pager', 'Pager'),
+        ('Office', _('Office')),
+        ('Laboratory', _('Laboratory')),
+        ('Mobile', _('Mobile')),
+        ('Fax', _('Fax')),
+        ('Out of hours', _('Out of hours')),
+        ('Pager', _('Pager')),
         )
-    label = models.CharField(max_length=64, null=True, blank=True)
-    country_code = models.CharField(max_length=5, default="44")
+    label = models.CharField(max_length=64, null=True, blank=True, verbose_name=_('Label'))
+    country_code = models.CharField(max_length=5, default="44", verbose_name=_('Country code'))
     area_code = models.CharField(
-        max_length=5, default="029", help_text="Not 02920"
+        max_length=5, default="029", help_text="Not 02920", verbose_name=_('Area code')
         )
-    number = models.CharField(max_length=12)
-    internal_extension = models.CharField(max_length=6, null=True, blank=True)
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.IntegerField(db_index=True)
+    number = models.CharField(max_length=12, verbose_name=_('Number'))
+    internal_extension = models.CharField(max_length=6, null=True, blank=True, verbose_name=_('Internal extensions'))
+    content_type = models.ForeignKey(ContentType, verbose_name=_('Content type'))
+    object_id = models.IntegerField(db_index=True, verbose_name=_('Object ID'))
     content_object = generic.GenericForeignKey()
 
     class Meta:
         ordering = ('label',)
+        verbose_name = _('Phone Contact')
+        verbose_name_plural = _('Phone Contacts') 
 
     def __unicode__(self):
         return u"%s: %s" % (self.label, self.number)
@@ -218,32 +225,36 @@ class PhoneContact(models.Model):
 
 class CommonFields(URLModelMixin):
     precise_location = models.CharField(
-        help_text=u"Precise location <em>within</em> the building, \
-        for visitors",
-        max_length=255, null=True, blank=True
+        help_text=_("Precise location <em>within</em> the building, \
+        for visitors"),
+        max_length=255, null=True, blank=True,verbose_name=_('Precise location')
         )
     access_note = models.CharField(
-        help_text=u"Notes on access/visiting hours/etc",
-        max_length=255, null=True, blank=True
+        help_text=_("Notes on access/visiting hours/etc"),
+        max_length=255, null=True, blank=True, verbose_name=_('Access note')
         )
     email = models.EmailField(
-        verbose_name="Email address", null=True, blank=True
+        verbose_name=_("Email address"), null=True, blank=True
         )
     phone_contacts = generic.GenericRelation(PhoneContact)
-    image = FilerImageField(on_delete=models.SET_NULL, null=True, blank=True)
+    image = FilerImageField(on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_('Image'))
 
     class Meta:
         abstract = True
+        verbose_name = _('Common Field')
+        verbose_name_plural = _('Common Fields')     
 
 
 class EntityLite(models.Model):
+
     name = models.CharField(
-        max_length=100, help_text="e.g. Department of Haematology"
+        max_length=100, help_text=_("e.g. Department of Haematology"), verbose_name=_('Name')
         )
 
     def __unicode__(self):
         return unicode(self.name)
-
+        verbose_name = _('Entity Lite')
+        verbose_name_plural = _('Entity Lites')  
 
 class EntityManager(TreeManager):
     def get_by_natural_key(self, slug):
@@ -286,98 +297,139 @@ class Entity(MPTTModel, EntityLite, CommonFields):
     objects = EntityManager()
 
     short_name = models.CharField(
-        blank=True, help_text="e.g. Haematology",
-        max_length=100, null=True, verbose_name="Short name for menus"
+        blank=True, help_text=_("e.g. Haematology"),
+        max_length=100, null=True, verbose_name=_("Short name for menus")
         )
-    abstract_entity = models.BooleanField(
-        "abstract", default=False,
-        help_text=u"Select if this <em>group</em> of entities, but not an \
-            entity itself, or if it's just a grouping of people",)
+    abstract_entity = models.BooleanField(_(
+        "abstract"), default=False,
+        help_text=_("Select if this <em>group</em> of entities, but not an \
+            entity itself, or if it's just a grouping of people"),)
     parent = TreeForeignKey(
         'self', null=True, blank=True, related_name='children'
-        )
+        )    
     display_parent = models.BooleanField(
-        u"Include parent entity's name in address", default=True,
-        help_text=u"Deselect if this entity recapitulates its parent's name"
-        )
+        _("Include parent entity's name in address"), default=True,
+        help_text=_("Deselect if this entity recapitulates its parent's name")
+        )    
     building_recapitulates_entity_name = models.BooleanField(
         default=False,
-        help_text=u"""
+        help_text=_("""
         Removes the first line of the address - use to avoid, for
         example:<br /><em>Department of Haematology<br />Haematology
         Building<br />...</em>
-        """
+        """),
+        verbose_name=_('Building recapitulates entity name')
         )
     building = models.ForeignKey(
         Building,
         null=True, blank=True,
         on_delete=models.SET_NULL,
-        help_text=u"Select the place where this Entity is based"
+        help_text=_("Select the place where this Entity is based"),
+        verbose_name=_('Building')
         )
     website = models.ForeignKey(
-        Page, verbose_name="Home page",
+        Page, verbose_name=_("Home page"),
         related_name='entity', unique=True, null=True, blank=True,
         on_delete=models.SET_NULL,
-        help_text=u"Select the Page that is the home page of this Entity \
-        (leave blank if this is an external Entity)",)
+        help_text=_("Select the Page that is the home page of this Entity \
+        (leave blank if this is an external Entity)"),)
 
     auto_news_page = models.BooleanField(
-        u"Publish an automatic news & events page",
+        _("Publish an automatic news & events page"),
         default=False,
         )
     news_page_menu_title = models.CharField(
-        u"Title",
+        _("Title"),
         max_length=50,
         default=DEFAULT_NEWS_PAGE_TITLE
         )
     news_page_intro = PlaceholderField(
         'body',
         related_name="news_page_intro",
+        verbose_name=_('News page intro')
         )
 
     auto_contacts_page = models.BooleanField(
-        u"Publish an automatic contacts & people page", default=False,
+        _("Publish an automatic contacts & people page"), default=False,
         )
     contacts_page_menu_title = models.CharField(
-        u"Title",
+        _("Title"),
         max_length=50,
         default=DEFAULT_CONTACTS_PAGE_TITLE,
         )
     contacts_page_intro = PlaceholderField(
         'body',
         related_name="contacts_page_intro",
-        help_text="Text for the Contacts & people page"
+        help_text=_("of people"),)
+    parent = TreeForeignKey('self', null=True, blank=True, related_name='children', verbose_name=_('Parent'))
+    display_parent = models.BooleanField(_("Include parent entity's name in address"), default=True, help_text=_("Deselect if this entity recapitulates its parent's name"))
+    building_recapitulates_entity_name = models.BooleanField(default=False, 
+        help_text=_("Removes the first line of the address - use to avoid, for example:<br /><em>Department of Haematology<br />Haematology Building<br />...</em>"),
+        verbose_name=_('Building recapitulates entity name'))
+    building = models.ForeignKey(Building, 
+        null=True, blank=True, 
+        on_delete=models.SET_NULL,
+        help_text=_("Select the place where this Entity is based"),
+        verbose_name=_('Building'))
+    website = models.ForeignKey(Page, verbose_name=_("Home page"),
+        related_name='entity', unique=True, null=True, blank=True,
+        on_delete=models.SET_NULL,
+        help_text=_("Select the Page that is the home page of this Entity (leave blank if this is an external Entity)"),)
+    
+    auto_news_page = models.BooleanField(_("Publish a news & events page for this entity automatcally"),
+        default=False,
+        )
+    news_page_menu_title = models.CharField(_("Title"),
+        max_length= 50,
+        default = DEFAULT_NEWS_PAGE_TITLE
+        )
+    news_page_intro = PlaceholderField('body', 
+        related_name="news_page_intro",
+        verbose_name=_('News page intro')
+        )
+
+    auto_contacts_page = models.BooleanField(_("Publish a contacts & people page for this entity automatcally"),default=False,
+        )
+    contacts_page_menu_title = models.CharField(_("Title"),
+        max_length=50,
+        default = DEFAULT_CONTACTS_PAGE_TITLE,
+        )
+    contacts_page_intro = PlaceholderField('body',
+        related_name="contacts_page_intro",
+        help_text = _("Text for the Contacts & people page"),
+        verbose_name=_('Contacts page intro')
         )
 
     auto_vacancies_page = models.BooleanField(
-        u"Publish an automatic vacancies & studentships page",
+        _("Publish an automatic vacancies & studentships page"),
         default=False,
         )
     vacancies_page_menu_title = models.CharField(
-        u"Title",
+        _("Title"),
         max_length=50,
         default=DEFAULT_VACANCIES_PAGE_TITLE,
         )
     vacancies_page_intro = PlaceholderField(
         'body',
         related_name="vacancies_page_intro",
+        verbose_name=_('Vacancies page intro')
         )
 
     if 'publications' in settings.INSTALLED_APPS:
         auto_publications_page = models.BooleanField(
-            u"Publish a publications page for this entity automatcally",
+            _("Publish a publications page for this entity automatcally"),
             default=False
             )
         publications_page_menu_title = models.CharField(
-            u"Title",
+            _("Title"),
             max_length=50,
             default=DEFAULT_PUBLICATIONS_PAGE_TITLE,
             )
 
     class Meta:
-        verbose_name_plural = "Entities"
         ordering = ['tree_id', 'lft']
-
+        verbose_name = _('Entitie')
+        verbose_name_plural = _('Entities')  
     # def natural_key(self):
     #     return (self.slug)
 
@@ -636,11 +688,13 @@ class Entity(MPTTModel, EntityLite, CommonFields):
 
 
 class Title(models.Model):
-    title = models.CharField(max_length=50, unique=True)
-    abbreviation = models.CharField(max_length=20, unique=True)
+    title = models.CharField(max_length=50, unique=True, verbose_name=_('Title'))
+    abbreviation = models.CharField(max_length=20, unique=True, verbose_name=_('Abbreviation'))
 
     class Meta:
         ordering = ['title']
+        verbose_name = _('Title')
+        verbose_name_plural = _('Titles')     
 
     def __unicode__(self):
         return self.abbreviation
@@ -650,10 +704,11 @@ class PersonLite(models.Model):
     title = models.ForeignKey(
         'contacts_and_people.Title',
         blank=True, null=True,
-        on_delete=models.SET_NULL)
-    given_name = models.CharField(max_length=50, blank=True, null=True)
-    middle_names = models.CharField(max_length=100, blank=True, null=True)
-    surname = models.CharField(max_length=50)
+        on_delete=models.SET_NULL, 
+        verbose_name=_('Title'))
+    given_name = models.CharField(max_length=50, blank=True, null=True, verbose_name=_('Gigen name'))
+    middle_names = models.CharField(max_length=100, blank=True, null=True, verbose_name=_('Middle names'))
+    surname = models.CharField(max_length=50, verbose_name=_('Surname'))
 
     def __unicode__(self):
         # to-do: make it smarter, i.e. don't include empty/None strings
@@ -681,56 +736,58 @@ class Person(PersonLite, CommonFields):
         related_name='person_user',
         unique=True,
         blank=True, null=True,
-        verbose_name='Arkestra User',
+        verbose_name=_('Arkestra User'),
         on_delete=models.PROTECT
         )
     institutional_username = models.CharField(
-        max_length=10, blank=True, null=True
+        max_length=10, blank=True, null=True, verbose_name=_('Institutional username')
         )
-    active = models.BooleanField(default=True,)
-    description = PlaceholderField('body')
+    active = models.BooleanField(default=True, verbose_name=_('Active'))
+    description = PlaceholderField('body', verbose_name=_('Description'))
     entities = models.ManyToManyField(
         Entity, related_name='people',
         through='Membership', blank=True, null=True
         )
     building = models.ForeignKey(
         Building,
-        verbose_name='Specify building',
-        help_text=u"""
+        verbose_name=_('Specify building'),
+        help_text=_("""
             <strong>Only</strong> required if this Person's <strong>Home
             entity</strong> has a different address
-        """,
+        """),
         blank=True, null=True,
         on_delete=models.SET_NULL
         )
     override_entity = models.ForeignKey(
-        Entity, verbose_name='Specify entity',
-        help_text=u"""
+        Entity, verbose_name=_('Specify entity'),
+        help_text=_("""
             <strong>Temporarily specify</strong> an entity for contact
             information - over-rides entity and postal address
-            """,
+            """),
         related_name='people_override',
         blank=True, null=True,
         on_delete=models.SET_NULL
         )
     please_contact = models.ForeignKey(
         'self',
-        help_text=u"""
+        help_text=_("""
             Publish another person's details as contact information for this
             person
-        """,
+        """),
         related_name='contact_for',
         blank=True, null=True,
-        on_delete=models.SET_NULL)
-    staff_id = models.CharField(null=True, blank=True, max_length=20)
-    data_feed_locked = models.BooleanField(default=False)
+        on_delete=models.SET_NULL,
+        verbose_name=_('Please contact'))
+    staff_id = models.CharField(null=True, blank=True, max_length=20, verbose_name=_('Staaff ID'))
+    data_feed_locked = models.BooleanField(default=False, verbose_name=_('Data feed locked'))
 
     # def natural_key(self):
     #     return (self.slug)
 
     class Meta:
         ordering = ['surname', 'given_name', 'user']
-        verbose_name_plural = "People"
+        verbose_name = _('People') 
+        verbose_name_plural = _("People")
 
     def __unicode__(self):
         title = self.title or ""
@@ -864,47 +921,51 @@ class Person(PersonLite, CommonFields):
             raise Exception  # TODO: raise a more appropriate exception
         return super(Person, self).save(*args, **kwargs)
 
-
 class Membership(models.Model):
     PERSON_DISPLAY_PRIORITY = (
-        (1, 'No role'),
-        (2, 'Significant'),
-        (3, 'More significant'),
-        (4, 'Very significant'),
-        (5, 'Home'),
+        (1, _('No role')),
+        (2, _('Significant')),
+        (3, _('More significant')),
+        (4, _('Very significant')),
+        (5, _('Home')),
         )
     ENTITY_DISPLAY_PRIORITY = (
-        (1, 'No role'),
-        (2, 'Has a role'),
-        (3, 'Key member'),
-        (4, 'Keyer member'),
-        (5, 'Keyest member'),
+        (1, _('No role')),
+        (2, _('Has a role')),
+        (3, _('Key member')),
+        (4, _('Keyer member')),
+        (5, _('Keyest member')),
         )
-    person = models.ForeignKey(Person, related_name='member_of')
-    entity = models.ForeignKey(Entity, related_name='members')
+    person = models.ForeignKey(Person, related_name='member_of', verbose_name=_('Person'))
+    entity = models.ForeignKey(Entity, related_name='members', verbose_name=_('Entity'))
     # this is currently too complex to manage - in this version it remains
     # unused
     display_role = models.ForeignKey(
         'self',
         related_name="display_roles",
         null=True, blank=True,
-        on_delete=models.SET_NULL)
-    key_contact = models.BooleanField(default=False)
-    role = models.CharField(max_length=50, null=True, blank=True)
+        on_delete=models.SET_NULL,
+        verbose_name=_('Display role'))
+    key_contact = models.BooleanField(default=False, verbose_name=_('Key contact'))
+    role = models.CharField(max_length=50, null=True, blank=True, verbose_name=_('Role'))
     # how important the role is to the person
     importance_to_person = models.IntegerField(
         blank=True, null=True,
-        choices=PERSON_DISPLAY_PRIORITY, default=1
-        )
+        choices=PERSON_DISPLAY_PRIORITY, default=1,
+        verbose_name=_('Importance to person')
+        )    
     # how important the role is to the entity
     importance_to_entity = models.IntegerField(
         blank=True, null=True,
-        choices=ENTITY_DISPLAY_PRIORITY, default=1
+        choices=ENTITY_DISPLAY_PRIORITY, default=1,
+        verbose_name=_('Importance to entity')
         )
 
     class Meta:
         ordering = ('-importance_to_entity', 'person__surname')
-
+        verbose_name = _('Membership')
+        verbose_name_plural = _('Memberships')
+           
     def __unicode__(self):
         if self.display_role:
             return "%s-%s" % (
@@ -950,25 +1011,25 @@ class Membership(models.Model):
 class EntityAutoPageLinkPluginEditor(CMSPlugin):
     AUTO_PAGES = {
         'contacts-and-people': (
-            u'Contacts & people',
+            _('Contacts & people'),
             'contact',
             'contacts_page_menu_title',
             'auto_contacts_page'
             ),
         'news-and-events': (
-            u'News & events',
+            _('News & events'),
             'news-and-events',
             'news_page_menu_title',
             'auto_news_page'
             ),
         'vacancies-and-studentships': (
-            u'Vacancies & studentships',
+            _('Vacancies & studentships'),
             'vacancies-and-studentships',
             'vacancies_page_menu_title',
             'auto_vacancies_page'
             ),
         'publications': (
-            u'Publications',
+            _('Publications'),
             'publications',
             'publications_page_menu_title',
             'auto_publications_page'),
@@ -979,51 +1040,57 @@ class EntityAutoPageLinkPluginEditor(CMSPlugin):
         )
     entity = models.ForeignKey(
         Entity, null=True, blank=True,
-        help_text="Leave blank for autoselect",
+        help_text=_("Leave blank for autoselect"),
         related_name="auto_page_plugin",
-        on_delete=models.SET_NULL)
+        on_delete=models.SET_NULL, 
+        verbose_name=_('Entity'))
     text_override = models.CharField(
         max_length=256, null=True, blank=True,
-        help_text="Override the default link text"
-        )
+        help_text=_("Override the default link text"),
+        verbose_name=_('Text override')
+        )    
+
 
 
 class EntityDirectoryPluginEditor(CMSPlugin):
     DIRECTORY_TYPE = (
-        ('children', u'Immediate children only'),
-        ('descendants', u'All descendants'),
+        ('children',    _('Immediate children only')),
+        ('descendants', _('All descendants')),
         )
     entity = models.ForeignKey(
         Entity, null=True, blank=True,
-        help_text="Leave blank for autoselect",
+        help_text=_("Leave blank for autoselect"),
         related_name="directory_plugin",
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
+        verbose_name=_('Entity')
         )
-
     levels = models.PositiveSmallIntegerField(
-        help_text=u'Leave blank/set to 0 to display all sub-levels',
-        null=True, blank=True
-        )
+        help_text=_('Leave blank/set to 0 to display all sub-levels'),
+        null=True, blank=True,
+        verbose_name=_('Levels')
+        )    
     display_descriptions_to_level = models.PositiveSmallIntegerField(
         default=0,
-        help_text=u'Blank for all levels, 0 for none, 1 for first', null=True,
-        blank=True
+        help_text=_('Blank for all levels, 0 for none, 1 for first'), null=True,
+        blank=True, verbose_name=_('Display descriptions to level')
         )
     link_icons = models.BooleanField(
-        help_text=u"Display link icons (first level only)",
-        default=True
+        help_text=_("Display link icons (first level only)"),
+        default=True,
+        verbose_name=_('Link icons')
         )
-    use_short_names = models.BooleanField(default=True)
+    use_short_names = models.BooleanField(default=True, verbose_name=_('Use short names'))
 
 
 class EntityMembersPluginEditor(CMSPlugin):
     entity = models.ForeignKey(
         Entity, null=True, blank=True,
-        help_text="Leave blank for autoselect",
+        help_text=_("Leave blank for autoselect"),
         related_name="entity_members_plugin",
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
+        verbose_name=_('Entity')
         )
-
+    
 # try:
 #     mptt.register(Entity)
 # except mptt.AlreadyRegistered:

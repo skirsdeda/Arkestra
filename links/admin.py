@@ -1,6 +1,6 @@
 from urlparse import urlparse 
 from urllib import urlopen
-
+from django.utils.translation import ugettext_lazy as _
 from django import forms
 from django.db.models import ForeignKey
 from django.contrib import admin, messages
@@ -54,7 +54,7 @@ class ObjectLinkInline(generic.GenericStackedInline):
                 ('include_description', 'key_link',),
             ),
         }),
-        ('Overrides', {
+        (_('Overrides'), {
             'fields': ('metadata_override', 'heading_override', 'description_override', 'html_title_attribute',
             ),
             'classes': ('collapse',),
@@ -77,13 +77,13 @@ class ExternalLinkForm(forms.ModelForm):
         # check if the url is a duplicate
         # if the url exists, and this would be a new instance in the database, it's a duplicate
         if self.Meta.model.objects.filter(url=url) and not self.instance.pk:
-            message = "Sorry, this link appears to exist already"
+            message = _("Sorry, this link appears to exist already")
             raise forms.ValidationError(message)
 
         # warn if the title is a duplicate
         # if the title exists, and this would be a new instance in the database, it's a duplicate        
         if self.Meta.model.objects.filter(title=title) and not self.instance.pk:
-            message = "Warning: the link title %s already exists in the database - consider changing it." %title
+            message = _("Warning: the link title %s already exists in the database - consider changing it.") %title
             messages.add_message(self.request, messages.WARNING, message)
 
         return self.cleaned_data    

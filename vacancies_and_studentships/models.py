@@ -1,7 +1,7 @@
 from django.db import models
 
 from cms.models import CMSPlugin
-
+from django.utils.translation import ugettext_lazy as _
 from arkestra_utilities.output_libraries.dates import nice_date
 from arkestra_utilities.generic_models import ArkestraGenericPluginOptions, ArkestraGenericModel
 from arkestra_utilities.mixins import URLModelMixin
@@ -15,10 +15,11 @@ class VacancyStudentshipBase(ArkestraGenericModel, URLModelMixin):
         abstract = True
         ordering = ['date']
 
-    date = models.DateField()
+    date = models.DateField(verbose_name=_('Closing date'))
 
     description = models.TextField(null=True, blank=True,
-        help_text="No longer used")
+        help_text=_("No longer used"),
+        verbose_name=_('Description'))
 
     def link_to_more(self):
         return self.get_hosted_by.get_auto_page_url("vacancies-and-studentships")
@@ -46,17 +47,19 @@ class Vacancy(VacancyStudentshipBase):
 
     job_number = models.CharField(max_length=9)
     salary = models.CharField(blank=True, max_length=255, null=True,
-        help_text=u"Please include currency symbol")
+        help_text=_("Please include currency symbol"))
 
     class Meta(VacancyStudentshipBase.Meta):
-        verbose_name_plural = "vacancies"
+        verbose_name = _('Vacancy')
+        verbose_name_plural = _("vacancies")
 
 
 class Studentship(VacancyStudentshipBase):
     url_path = "studentship"
 
     supervisors = models.ManyToManyField(Person, null=True, blank=True,
-        related_name="%(class)s_people")
+        related_name="%(class)s_people", 
+        verbose_name=_('Supervisors'))
 
     class Meta:
         verbose_name_plural = "studentships"
@@ -67,8 +70,8 @@ class VacanciesPlugin(CMSPlugin, ArkestraGenericPluginOptions):
         (u"vacancies", u"Vacancies only"),
         (u"studentships", u"Studentships only"),
     )
-    display = models.CharField(max_length=25,choices=DISPLAY, default="vacancies & studentships")
+    display = models.CharField(max_length=25,choices=DISPLAY, default="vacancies & studentships", verbose_name=_('Display'))
     # entity = models.ForeignKey(Entity, null=True, blank=True,
     #     help_text="Leave blank for autoselect", related_name="%(class)s_plugin")
-    vacancies_heading_text = models.CharField(max_length=25, default="Vacancies")
-    studentships_heading_text = models.CharField(max_length=25, default="Studentships")
+    vacancies_heading_text = models.CharField(max_length=25, verbose_name=_('Vacancies heading text'), default="Vacancies")
+    studentships_heading_text = models.CharField(max_length=25, verbose_name=_('Studentship heading text'), default="Studentships")

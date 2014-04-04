@@ -1,7 +1,7 @@
 from django.db.models import get_model
 
 from django.conf import settings
-
+from django.utils.translation import ugettext_lazy as _
 from cms.models import Placeholder
 from cms.models.pluginmodel import CMSPlugin
 from cms.plugins.text.models import Text
@@ -119,7 +119,7 @@ def convert(action = "dryrun"):
                 try:
                     getattr(actual_model, new_field)
                 except AttributeError:
-                    message = "field " + new_field + " is missing - check the model and try agin"
+                    message = _("field ") + new_field + _(" is missing - check the model and try agin")
                     models_dictionary["messages"][mmodel][old_field]["Error"]=message
                     continue
                     
@@ -152,18 +152,18 @@ def convert(action = "dryrun"):
                                                                                                                             
                             # setattr(item, old_field, "")
                             if execute == "execute":
-                                item.status = "Converted to placeholder"
+                                item.status = _("Converted to placeholder")
                             else:
-                                item.status = "Unconverted"
+                                item.status = _("Unconverted")
                                         
                         else:
                             # this item is so short it must be junk
                             if execute == "execute":
                                 setattr(item, old_field, "")
                             
-                                item.status = "Junk field - too short; was deleted instead of converted:" + old_field_content
+                                item.status = _("Junk field - too short; was deleted instead of converted:") + old_field_content
                             else:    
-                                item.status = "Junk field - too short; will be deleted instead of converted:" + old_field_content
+                                item.status = _("Junk field - too short; will be deleted instead of converted:") + old_field_content
                             # make a note that this was a junk item
                             junk_content.append(item)
                                 # make a note that we moved this item
@@ -176,25 +176,25 @@ def convert(action = "dryrun"):
  
                 # information about junk content items
                 if execute == "execute":
-                    message = " ".join((str(len(junk_content)), "junk items not converted items"))
+                    message = " ".join((str(len(junk_content)), _("junk items not converted items")))
                 else:
-                    message = " ".join((str(len(junk_content)), "junk items found"))                    
+                    message = " ".join((str(len(junk_content)), _("junk items found")))                    
 
                 models_dictionary["messages"][mmodel][old_field]["Junk fields"]=message
 
                 # information about items that have been/need to be converted
                 if execute == "execute":
-                    message = str(len(moved_items)) + " items were converted to placeholder " + new_field
+                    message = str(len(moved_items)) + _(" items were converted to placeholder ") + new_field
                 else:
-                    message = str(len(moved_items)) + " items need to be converted to placeholder " + new_field
+                    message = str(len(moved_items)) + _(" items need to be converted to placeholder ") + new_field
             
                 models_dictionary["messages"][mmodel][old_field]["Conversions"]=message
             
                 # list every item that was copied for the full report
                 if execute == "execute":
-                    action = "Fields that were copied"
+                    action = _("Fields that were copied")
                 else:
-                    action = "Fields to be copied"
+                    action = _("Fields to be copied")
                     
                 models_dictionary["modules"][module]["models"][model]["actions"][action]=moved_items
                 

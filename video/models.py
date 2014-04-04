@@ -33,8 +33,8 @@ class Video(File):
 class ArkestraVideo(Video):
     class Meta:
         proxy = True
-        verbose_name = "Video"
-
+        verbose_name = _("Video")
+        verbose_name_plural = _("Videos")
 
 class FilerVideoField(FilerFileField):
     default_model_class = Video
@@ -61,9 +61,9 @@ class VideoPluginEditor(CMSPlugin):
     )
     width = models.FloatField(null=True, blank=True, choices = VIDEO_WIDTHS, default = 1000.0)
 
-    use_description_as_caption = models.BooleanField(verbose_name = "Use description", default=False, help_text = "Use image's description field as caption")
-    caption = models.TextField(_("Caption"), blank=True, null=True)
-    float = models.CharField(_("float"), max_length=10, blank=True, null=True, choices=FLOAT_CHOICES)
+    use_description_as_caption = models.BooleanField(verbose_name = _("Use description"), default=False, help_text = _("Use image's description field as caption"))
+    caption = models.TextField(verbose_name=_("Caption"), blank=True, null=True)
+    float = models.CharField(verbose_name=_("float"), max_length=10, blank=True, null=True, choices=FLOAT_CHOICES)
     
     def __unicode__(self):
         if self.video:
@@ -73,10 +73,10 @@ class VideoPluginEditor(CMSPlugin):
         return ''
         
 class VideoVersion(models.Model):
-    source = FilerVideoField()
-    size = models.SmallIntegerField(blank=True, null=True,)
-    codec = models.CharField(max_length=20, blank=True, null=True,)
-    status = models.CharField(max_length=20, default = "newly-created", blank=True, null=True,)
+    source = FilerVideoField(verbose_name=_('Source'))
+    size = models.SmallIntegerField(blank=True, null=True, verbose_name=_('Size'))
+    codec = models.CharField(max_length=20, blank=True, null=True, verbose_name=_('Codec'))
+    status = models.CharField(max_length=20, default = "newly-created", blank=True, null=True, verbose_name=_('Status'))
 
     def codec_and_size(self):
         # returns a string containing codec and size - e.g. h264-720 - used in various ways, such as version filenames

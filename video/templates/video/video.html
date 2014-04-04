@@ -18,8 +18,8 @@
 {% else %}
 	<div style="background: #bbb; border-radius: 10px; width: {{video.width}}px; height:{{video.height}}px;">
 		<div style="text-align: center; padding: 15%">
-			<p>The video <em>{{ video }}</em> is being encoded.</p>
-			<p>Please try again in a few minutes.</p>
+			<p>{% trans 'The video' %} <em>{{ video }}</em> {% trans 'is being encoded.' %}</p>
+			<p>{% trans 'Please try again in a few minutes.' %}</p>
 		</div>
 	</div>
 {% endif %}

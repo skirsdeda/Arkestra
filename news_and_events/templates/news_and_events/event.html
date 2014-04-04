@@ -4,6 +4,7 @@
 {% load humanize %}
 {% load typogrify_tags %}
 {% load thumbnail %}
+{% load i18n %}
 
 {% block meta %}
 	<meta name="description" content="{{event.summary}}"/>
@@ -47,7 +48,7 @@
 			</div>
 		</div>
 		<ul class = "news icons">
-			<li><a href = "{{ event.link_to_more }}">More {{ entity.short_name }} events</a></li>
+			<li><a href = "{{ event.link_to_more }}">{% trans 'More' %} {{ entity.short_name }} {% trans 'events' %}</a></li>
 		</ul>
     {% endblock arkestra_content %}
 {% endwith %}

@@ -1,5 +1,5 @@
 {% extends studentship.get_template %}
-{% load humanize typogrify_tags arkestra_date_tags thumbnail placeholder_tags %}
+{% load humanize typogrify_tags arkestra_date_tags thumbnail placeholder_tags i18n %}
 
 {% block title %}
 	<title>Studentship ({{ studentship.hosted_by.short_name }}): {{ studentship }}</title>
@@ -29,16 +29,16 @@
 				    {% if image %}<div><img src="{{ image.url }}" /></div>{% endif %}
 				{% endblock image %}				
 				<dl class="not-indented">
-					<dt>Closing date</dt>
+					<dt>{% trans 'Closing date' %}</dt>
 					<dd>{% date studentship.date %}</dd>
 					{% if studentship.supervisors.all %}
-	 				    <dt>General enquiries</dt>
+	 				    <dt>{% trans 'General enquiries' %}</dt>
 	 				    {% for person in studentship.supervisors.all %}
 							<dd><a href = "{{ person.get_absolute_url }}">{{ person }}</a></dd>
 						{% endfor %}
 					{% endif %}
 					{% if studentship.enquiries.all %}
-	 				    <dt>General enquiries</dt>
+	 				    <dt>{% trans 'General enquiries' %}</dt>
 	 				    {% for person in studentship.enquiries.all %}
 							<dd><a href = "{{ person.get_absolute_url }}">{{ person }}</a></dd>
 						{% endfor %}
@@ -50,7 +50,7 @@
 			</div>
 		</div>
 		<ul class = "news icons">
-			<li><a href = "{{ studentship.link_to_vacancies_and_studentships_page }}">More {{ studentship.hosted_by.short_name }} vacancies</a></li>
+			<li><a href = "{{ studentship.link_to_vacancies_and_studentships_page }}">{% trans 'More' %} {{ studentship.hosted_by.short_name }} {% trans 'vacancies' %}</a></li>
 		</ul>
     {% endblock arkestra_content %}
 {% endblock main_page_body %}

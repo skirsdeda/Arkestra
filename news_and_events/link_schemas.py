@@ -1,4 +1,5 @@
 # register all interesting models for search
+from django.utils.translation import ugettext_lazy as _
 
 from news_and_events import models, admin
 from links import schema, LinkWrapper

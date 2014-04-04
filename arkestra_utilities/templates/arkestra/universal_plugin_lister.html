@@ -1,6 +1,6 @@
 {% if everything.lists %}
     {% load placeholder_tags %}
-    <div class="{{ everything.row_class }} {{ everything.type }}">
+    <div class="{{ everything.row_class }} {{ everything.type }} list-{{ everything.display }}">
     	{% render_placeholder intro_page_placeholder %}
     	{% for list in everything.lists %}
     		{% if list.items or list.other_items %}

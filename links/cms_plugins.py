@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.contenttypes.models import ContentType
-
+from django.utils.translation import ugettext_lazy as _
 from cms.plugin_base import CMSPluginBase
 from cms.plugin_pool import plugin_pool
 
@@ -28,7 +28,7 @@ class PluginInlineLink(SupplyRequestMixin, admin.StackedInline):
                 ('inline_item_ordering', 'active', ),
             ),
         }),
-        ('Overrides', {
+        (_('Overrides'), {
             'fields': ('metadata_override', 'heading_override', 'description_override', 'html_title_attribute',
             ),
             'classes': ('collapse',),
@@ -89,7 +89,7 @@ class FocusOnInlineItemAdmin(admin.StackedInline):
                 'destination_content_type', 'destination_object_id',
             ),
         }),
-        ('Overrides', {
+        (_('Overrides'), {
             'fields': ('short_text_override', 'text_override','description_override', 'image_override',
             ),
             'classes': ('collapse',),

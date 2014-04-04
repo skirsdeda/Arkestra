@@ -7,7 +7,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 from easy_thumbnails.files import get_thumbnailer
 from widgetry.views import search
-
+from django.utils.translation import ugettext_lazy as _
 
 class PersonWrapper(LinkWrapper):
     search_fields = admin.PersonAdmin.search_fields
@@ -36,7 +36,7 @@ class PersonWrapper(LinkWrapper):
         return url
 
     def heading(self):
-        return "Related people"
+        return _("Related people")
 schema.register_wrapper(models.Person,PersonWrapper)
 
 class UserWrapper(LinkWrapper):
@@ -67,9 +67,9 @@ class EntityWrapper(LinkWrapper):
 
     def description(self):
         if self.obj.abstract_entity:
-            return "Abstract entity - description unavailable"
+            return _("Abstract entity - description unavailable")
         if self.obj.external_url:
-            return "External entity at " + self.obj.external_url.url
+            return _("External entity at ") + self.obj.external_url.url
         if self.obj.get_website and self.obj.get_website.get_meta_description():
             return self.obj.get_website.get_meta_description()
         # the following functionality will have to be restored in such a way that we don't return admin messages to the frontend - later
@@ -77,7 +77,7 @@ class EntityWrapper(LinkWrapper):
         #     return u"<span class='errornote'>The page <em>" + unicode(self.obj.get_website) + "</em> has no description metadata. If you are responsible for this page, please address this problem <strong>immediately.</strong></span>"
 
     def heading(self):
-        return "Related pages"
+        return _("Related pages")
 
     def url(self):
         return self.obj.get_website_url()
@@ -99,7 +99,7 @@ class BuildingWrapper(LinkWrapper):
         return ", ".join(self.obj.get_postal_address[1:])
 
     def heading(self):
-        return "Places"
+        return _("Places")
 
     def text(self):
         return self.obj.identifier()

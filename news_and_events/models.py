@@ -2,10 +2,12 @@ from django.utils.translation import ugettext_lazy as _
 from datetime import datetime
 from datetime import date as pythondate
 
+from dateutil import zoneinfo
 from django.db import models
 from django.db.models import Q
 from django.db.models.signals import post_save
 from django.template.defaultfilters import date, time, slugify
+from django.conf import settings
 
 import mptt
 
@@ -24,13 +26,18 @@ from arkestra_utilities.settings import PLUGIN_HEADING_LEVELS, PLUGIN_HEADING_LE
 
 from managers import NewsArticleManager, EventManager
 
+
+
 class NewsAndEvents(ArkestraGenericModel, URLModelMixin):
 
     content = models.TextField(null=True, blank=True,
-        help_text="Not used or required for external items")
+        help_text=_("Not used or required for external items"),
+        verbose_name=_('Content'))
 
     class Meta:
         abstract = True
+        verbose_name = _('New and Event')
+        verbose_name_plural = _('News and Events')
 
     def save(self, *args, **kwargs):
         super(NewsAndEvents, self).save(*args, **kwargs)
@@ -44,24 +51,29 @@ class NewsArticle(NewsAndEvents):
     objects = NewsArticleManager()
 
     date = models.DateTimeField(default=datetime.now,
-        help_text=u"Dateline for the item (the item will not be published until then" ,  )
+        help_text=_("Dateline for the item (the item will not be published until then"),  
+        verbose_name=_('Date'))
     display_indefinitely = models.BooleanField(
-        help_text=u"Important news; it won't expire from news lists" , )
+        help_text=_("Important news; it won't expire from news lists") , 
+        verbose_name=_('Display Indefinitely'))
     external_news_source = models.ForeignKey('NewsSource', null=True, blank=True,
-        help_text=u"If this news item is from an external source")
-    sticky_until = models.DateField(u"Featured until",
+        help_text=_("If this news item is from an external source"), 
+        verbose_name=_('External news source'))
+    sticky_until = models.DateField(verbose_name=_("Featured until"),
         null=True, blank=True, default=pythondate.today,
-        help_text=u"Will remain a featured item until this date")
-    is_sticky_everywhere = models.BooleanField(u"Featured everywhere",
-        default=False, help_text=u"Will be featured in other entities's news lists")
+        help_text=_("Will remain a featured item until this date"))
+    is_sticky_everywhere = models.BooleanField(verbose_name=_("Featured everywhere"),
+        default=False, help_text=_("Will be featured in other entities's news lists"))
 
     class Meta:
         ordering = ['-date']
-
+        verbose_name = _('News Article')
+        verbose_name_plural = _('News Articles')
+        
     @property
     def has_expired(self):
        # the item is too old to appear in current lists, and should only be listed in archives
-       age = datetime.now() - self.date
+       age = datetime.now().replace(tzinfo=zoneinfo.gettz(settings.TIME_ZONE)) - self.date
        if AGE_AT_WHICH_ITEMS_EXPIRE and age.days > AGE_AT_WHICH_ITEMS_EXPIRE:
            return True
 
@@ -72,71 +84,80 @@ class NewsArticle(NewsAndEvents):
         Usually, this is an easily-readble rendering of the date (e.g. "April 2010") but it can also be "Top news", for items to be given special prominence.
         """
         if getattr(self, "sticky", None):
-            return "Top news"
+            return _("Top news")
         get_when = nice_date(self.date, ARKESTRA_DATE_FORMATS["date_groups"])
         return get_when
-
 
 class Event(NewsAndEvents, LocationModelMixin):
     url_path = "event"
     objects = EventManager()
 
+
     type = models.ForeignKey('EventType',
-        on_delete=models.PROTECT)
+        on_delete=models.PROTECT,
+        verbose_name=_('Type'))
     featuring = models.ManyToManyField(Person, related_name='%(class)s_featuring',
         null=True, blank=True,
-        help_text="The speakers, lecturers, instructors or other people featured in this event")
+        help_text=_("The speakers, lecturers, instructors or other people featured in this event"),
+        verbose_name=_('Featuring'))
     parent = models.ForeignKey('self',
         blank=True, null=True,
         on_delete=models.PROTECT,
-        related_name='children')
+        related_name='children',
+        verbose_name=_('Parent'))
     SERIES = (
-        (False, u"an actual event"),
-        (True, u"a series of events"),
+        (False, _("an actual event")),
+        (True, _("a series of events")),
     )
-    series = models.BooleanField("This is", default=False, choices=SERIES)
+    series = models.BooleanField(verbose_name=_("This is"), default=False, choices=SERIES)
     SHOW_TITLES = (
-        ("series children", u"show title of series followed by title of children"),
-        ("series", u"show title of series only"),
-        ("children", u"show title of children only"),
+        ("series children", _("show title of series followed by title of children")),
+        ("series",          _("show title of series only")),
+        ("children",        _("show title of children only")),
     )
-    show_titles = models.CharField(u"Titles",
+    show_titles = models.CharField(_("Titles"),
         max_length = 25,
         default="children",
         choices=SHOW_TITLES,
         )
     DISPLAY_SERIES_SUMMARY = (
-        (False, u"display children's summaries"),
-        (True, u"display the summary for the series"),
+        (False, _("display children's summaries")),
+        (True, _("display the summary for the series")),
     )
-    display_series_summary = models.BooleanField(u"Summaries",
+    display_series_summary = models.BooleanField(_("Summaries"),
         default=False,
         choices=DISPLAY_SERIES_SUMMARY,
         )
     child_list_heading = models.CharField(max_length=50, null=True, blank=True,
-        help_text= u"e.g. Conference sessions; Lectures in this series")
-    date = models.DateField("Start date",
+        help_text= _("e.g. Conference sessions; Lectures in this series"),
+        verbose_name=_('Child list heading'))
+    date = models.DateField(_("Start date"),
         null=True, blank=True,
-        help_text=u"Not required for a series of events")
-    start_time = models.TimeField(null=True, blank=True)
-    end_date = models.DateField(null=True, blank=True)
-    end_time = models.TimeField(null=True, blank=True)
-    single_day_event = models.BooleanField(default=False)
+        help_text=_("Not required for a series of events"))
+    start_time = models.TimeField(null=True, blank=True, verbose_name=_("Start time"))
+    end_date = models.DateField(null=True, blank=True, verbose_name=_("End date"))
+    end_time = models.TimeField(null=True, blank=True, verbose_name=_("End time"))
+    single_day_event = models.BooleanField(default=False, verbose_name=_("Single day event"))
     building = models.ForeignKey(Building,
         null=True, blank=True,
-        on_delete=models.SET_NULL)
+        on_delete=models.SET_NULL,
+        verbose_name=_('Building'))
     jumps_queue_on = models.DateField(null=True, blank=True,
-        help_text=u"Will become a featured item on this date")
-    jumps_queue_everywhere = models.BooleanField(default=False)
+        help_text=_("Will become a featured item on this date"),
+        verbose_name=_('Jumps queue on'))
+    jumps_queue_everywhere = models.BooleanField(default=False, verbose_name=_('Jums queue everywhere'))
     registration_enquiries = models.ManyToManyField(Person,
         related_name = '%(class)s_registration',
         null = True, blank = True,
-        help_text=u"The people who responsible for registration, if different from those in <em>Please contact</em>"
+        help_text=_("The people who responsible for registration, if different from those in <em>Please contact</em>"),
+        verbose_name=_('Registration enquiries')
         )
 
     class Meta:
         ordering = ['date', 'start_time']
-
+        verbose_name = _('Event')
+        verbose_name_plural = _('Events')
+        
     @property
     def informative_url(self):
         """
@@ -162,6 +183,8 @@ class Event(NewsAndEvents, LocationModelMixin):
         """
         if self.parent and self.parent.series:
             return self.parent.show_titles
+
+
 
     @property
     def is_uninformative(self):
@@ -264,7 +287,7 @@ class Event(NewsAndEvents, LocationModelMixin):
                 dates = nice_date(date, date_format) + unicode(_(u" to ")) + nice_date(end_date, end_date_format)
             return dates
         else:
-            return "Series"
+            return _("Series")
 
     def get_times(self):
         start_time = self.start_time
@@ -322,7 +345,7 @@ class Event(NewsAndEvents, LocationModelMixin):
     def get_when(self):
         if self.date:
             if getattr(self, "sticky", None):
-                return "Top events"
+                return _("Top events")
 
             #return self.date
             #now = datetime.now()
@@ -338,8 +361,7 @@ class Event(NewsAndEvents, LocationModelMixin):
             #when_heading =  tddict[tdlist[bisect.bisect(tdlist, diff.days)]]
             #return when_heading
         elif self.series:
-            return "Regular events"
-
+            return _("Regular events")
 
     def get_admin_title(self):
         return self.title + " (" + self.get_dates() + ")"
@@ -358,6 +380,10 @@ class EventType(models.Model):
 class NewsSource(models.Model):
     external_news_source = models.CharField(max_length=50)
 
+    class Meta:
+        verbose_name = _('News Source')
+        verbose_name_plural = _('News Sources')
+    
     def __unicode__(self):
         return self.external_news_source
 
@@ -371,14 +397,18 @@ post_save.connect(receiver_function, sender = Event)
 
 class NewsAndEventsPlugin(CMSPlugin, ArkestraGenericPluginOptions):
     DISPLAY = (
-        ("news & events", u"News and events"),
-        ("news", u"News only"),
-        ("events", u"Events only"),
+        ("news & events", _("News and events")),
+        ("news",          _("News only")),
+        ("events",        _("Events only")),
         )
-    display = models.CharField("Show", max_length=25,choices = DISPLAY, default = "news & events")
-    show_previous_events = models.BooleanField()
-    news_heading_text = models.CharField(max_length=25, default=_(u"News"))
-    events_heading_text = models.CharField(max_length=25, default=_(u"Events"))
+    display = models.CharField(verbose_name=_("Show"), max_length=25,choices = DISPLAY, default = "news & events")
+    show_previous_events = models.BooleanField(verbose_name=_('Show previous events'))
+    news_heading_text = models.CharField(max_length=25, default=_("News"), verbose_name=_('News heading text'))
+    events_heading_text = models.CharField(max_length=25, default=_("Events"), verbose_name=_('Events heading text'))
+
+    class Meta:
+        verbose_name = _('News and Events plugin')
+        verbose_name_plural = _('News and Events plugins')
 
 try:
     mptt.register(Event)

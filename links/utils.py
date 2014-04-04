@@ -1,6 +1,6 @@
 from urlparse import urlparse 
 from urllib import urlopen
-
+from django.utils.translation import ugettext_lazy as _
 from django import forms
 from django.contrib import messages
 
@@ -23,9 +23,9 @@ def check_urls(url, allowed_schemes = None):
     if not scheme in allowed_schemes:
         permitted_schemes = (", ".join(allowed_schemes[:-1]) + " and " + allowed_schemes[-1]) if len(allowed_schemes) > 1 else allowed_schemes[0]
         if scheme:
-            message = "Sorry, link type %s is not permitted. Permitted types are %s." % (scheme, permitted_schemes)
+            message = ('Sorry, link type %s is not permitted. Permitted types are %s.') % (scheme, permitted_schemes)
         else:
-            message = 'Please provide a complete URL, such as "http://example.com/" or "mailto:example@example.com". Permitted schemes are %s.' % permitted_schemes
+            message = _('Please provide a complete URL, such as "http://example.com/" or "mailto:example@example.com". Permitted schemes are %s.') % permitted_schemes
 
         raise forms.ValidationError(message)
     
@@ -35,7 +35,7 @@ def check_urls(url, allowed_schemes = None):
         try:
             url_test = urlopen(url)
         except IOError:
-            message = "Hostname " + purl.netloc + " not found. Please check that it is correct."
+            message = _("Hostname ") + purl.netloc + _(" not found. Please check that it is correct.")
             raise forms.ValidationError(message)
 
         # check for a 404 (needs python 2.6)
@@ -43,13 +43,13 @@ def check_urls(url, allowed_schemes = None):
             code = url_test.getcode()
         except AttributeError:
             message_list.append({
-                "message": "Warning: I couldn't check your link %s. Please check that it works." %url, 
+                "message": _("Warning: I couldn't check your link %s. Please check that it works.") %url, 
                 "level": messages.WARNING
                 })
         else:
             if code == 404:
                 message_list.append({
-                    "message": "Warning: the link %s appears not to work. Please check that it is correct." %url, 
+                    "message": _("Warning: the link %s appears not to work. Please check that it is correct.") %url, 
                     "level": messages.WARNING
                     })
         
@@ -63,7 +63,7 @@ def check_urls(url, allowed_schemes = None):
     # for mailto types only
     elif str(scheme) == "mailto":
         message_list.append({
-            "message": "Warning: this email address hasn't been checked. I hope it's correct.", 
+            "message": _("Warning: this email address hasn't been checked. I hope it's correct."), 
             "level": messages.WARNING
             })
             
@@ -85,13 +85,13 @@ def get_or_create_external_link(request, input_url, external_url, title, descrip
 
     if external_url:
         message_list.append({
-            "message": "This is an external item: %s." % external_url.url, 
+            "message": _("This is an external item: %s.") % external_url.url, 
             "level": messages.INFO
             })
         
         if input_url:
             message_list.append({
-                "message": "You can't have both External URL and Input URL fields, so I have ignored your Input URL.", 
+                "message": _("You can't have both External URL and Input URL fields, so I have ignored your Input URL."), 
                 "level": messages.WARNING
                 })
 
@@ -109,13 +109,13 @@ def get_or_create_external_link(request, input_url, external_url, title, descrip
 
         if created:
             message_list.append({
-                "message": "A link for this item has been added to the External Links database: %s." % external_url.url, 
+                "message": _("A link for this item has been added to the External Links database: %s.") % external_url.url, 
                 "level": messages.INFO
                 })
 
         else:
             message_list.append({
-                "message": "Using existing External Link: %s." % external_url.url, 
+                "message": _("Using existing External Link: %s.") % external_url.url, 
                 "level": messages.INFO
                 })
 

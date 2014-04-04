@@ -1,5 +1,5 @@
 from django import forms
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 from cms.plugin_base import CMSPluginBase
 from cms.plugin_pool import plugin_pool
@@ -30,7 +30,7 @@ class CMSNewsAndEventsPlugin(NewsAndEventsPluginMixin, ArkestraGenericPlugin, Au
     
     fieldsets = (
         (None, {
-        'fields': (('display', 'layout', 'list_format',),  ( 'format', 'order_by', 'group_dates',), 'limit_to')
+        'fields': (('display', 'layout', 'list_format',),  ( 'format', 'order_by', 'group_dates',), 'limit_to', ('news_type', 'event_type','show_date_filter', 'show_importance_filter', 'show_categories'))
     }),
         ('Advanced options', {
         'classes': ('collapse',),
@@ -40,7 +40,7 @@ class CMSNewsAndEventsPlugin(NewsAndEventsPluginMixin, ArkestraGenericPlugin, Au
 
     # autocomplete fields
     related_search_fields = ['entity',]
-
+ 
     def icon_src(self, instance):
         return "/static/plugin_icons/news_and_events.png"
 

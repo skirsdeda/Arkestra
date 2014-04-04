@@ -5,7 +5,7 @@ This module will remove junk from plugins
 from cms.models import Placeholder
 from cms.models.pluginmodel import CMSPlugin
 from cms.plugins.text.models import Text
-
+from django.utils.translation import ugettext_lazy as _
 from BeautifulSoup import BeautifulSoup
 import re
 

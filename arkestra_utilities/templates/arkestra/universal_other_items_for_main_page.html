@@ -1,8 +1,9 @@
+{% load i18n %}
 {% ifequal everything.type "main_page" %}
     {% if list.other_items %}+++
 		<ul class="close other-items icons">
 			{% for item in list.other_items %}
-				<li><a href = "{{item.link}}">{{item.title|capfirst }}</a> ({{ item.count }} item{{ item.count|pluralize }})</li>
+				<li><a href = "{{item.link}}">{{item.title|capfirst }}</a> ({{ item.count }} {% trans 'item' %}{{ item.count|pluralize }})</li>
 			{% endfor %}
 		</ul>
 	{% endif %}

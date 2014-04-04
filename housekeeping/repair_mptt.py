@@ -12,7 +12,7 @@ from django.db.models import get_model
 import django.shortcuts as shortcuts
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
-
+from django.utils.translation import ugettext_lazy as _
 
 def setup():
     from django.contrib.auth.models import User
@@ -24,7 +24,7 @@ def check_no_moderator():
     if settings.CMS_MODERATOR:
         print "!! Please set CMS_MODERATOR=False in settings before using this script !!"
         print 'aborted'
-        raise Exception("!! Please set CMS_MODERATOR=False in settings before using this script !!")
+        raise Exception(_("!! Please set CMS_MODERATOR=False in settings before using this script !!"))
 
 
 
@@ -38,7 +38,7 @@ def fix_tree_id(model):
         node.save()
         r_fix_tree_id(node.children.all(), base_tree_id)
         base_tree_id += 1
-    return "I fixed some trees"
+    return _("I fixed some trees")
     
 def r_fix_tree_id(nodes, tree_id):
     for node in nodes:
@@ -71,7 +71,7 @@ def fix_leftright(model,do_alteration=True):
         total_nodes = model.objects.filter(tree_id=root_node.tree_id).count()
         if not total_nodes * 2 == counter-1:
             print "            something is wrong! %s != %s" % (total_nodes * 2, counter-1)
-    return "did some leftright checking"
+    return _("did some leftright checking")
     
 def fix_level(model):
     setup()
@@ -82,7 +82,7 @@ def fix_level(model):
     for root_node in all_nodes.filter(parent=None):
         bad_level_count += r_fix_level(root_node, level=level)
     print "        fixed level of %s nodes" % bad_level_count
-    return "I fixed level of %s nodes" % bad_level_count
+    return _("I fixed level of %s nodes") % bad_level_count
 
 def r_fix_level(node, level):
     bad_level_count = 0
@@ -135,11 +135,11 @@ def check_leftright():
             errors[node.id] = [u"node: %s" % node]
         errors[node.id].append(msg)
     def recur(node, counter):
-        if not node.lft == counter: add_error(node, u"lft is %s, should be %s." % (node.lft, counter))
+        if not node.lft == counter: add_error(node, _(("lft is %s, should be %s.")) % (node.lft, counter))
         counter += 1
         for child in node.children.all().order_by('tree_id', 'parent', 'lft'):
             counter = recur(child, counter)
-        if not node.rght == counter: add_error(node, u"rght is %s, should be %s." % (node.rght, counter))
+        if not node.rght == counter: add_error(node, _(("rght is %s, should be %s.")) % (node.rght, counter))
         counter += 1
         return counter
     for root_page in Page.objects.filter(parent=None).order_by('tree_id', 'parent', 'lft'):
@@ -148,7 +148,7 @@ def check_leftright():
         total_pages = Page.objects.filter(tree_id=root_page.tree_id).count()
         if not total_pages * 2 == counter-1:
             print "            something is wrong! %s != %s" % (total_pages * 2, counter-1)
-            report.append("something is wrong! %s != %s" % (total_pages * 2, counter-1))
+            report.append(_(("something is wrong! %s != %s")) % (total_pages * 2, counter-1))
     from pprint import pprint
     pprint(errors)
     return errors

@@ -102,13 +102,13 @@ class ImageSetTypePluginMixin(object):
 
 class ImageSetPlugin(CMSPlugin, ImageSetTypePluginMixin):
     IMAGESET_KINDS = (
-        ("basic", "Basic"),
-        ("multiple", "Multiple image gallery"),
-        ("lightbox", "Lightbox with gallery"),
-        ("lightbox-single", "Lightbox without gallery"),
-        ("slider", "Slider"),
+        ("basic",           _("Basic")),
+        ("multiple",        _("Multiple image gallery")),
+        ("lightbox",        _("Lightbox with gallery")),
+        ("lightbox-single", _("Lightbox without gallery")),
+        ("slider",          _("Slider")),
         )
-    kind = models.CharField(choices = IMAGESET_KINDS, max_length = 50, default = "basic")
+    kind = models.CharField(choices = IMAGESET_KINDS, max_length = 50, default = "basic", verbose_name=_('Kind'))
     IMAGE_WIDTHS = (
         (1000.0, u"Automatic"),
         (u'Relative to column', (
@@ -128,9 +128,10 @@ class ImageSetPlugin(CMSPlugin, ImageSetTypePluginMixin):
         ),
         (0.0, u"Native"),
     )
-    width = models.FloatField(u"Width of set", choices = IMAGE_WIDTHS, default = 1000.0)
+    width = models.FloatField(verbose_name=_("Width of set"), choices = IMAGE_WIDTHS, default = 1000.0)
     height = models.PositiveIntegerField(null=True, blank=True,
-        help_text = "Only applies when <strong>Aspect ratio</strong> is <em>Automatic</em>")
+        help_text = _("Only applies when <strong>Aspect ratio</strong> is <em>Automatic</em>"),
+        verbose_name=_('Height'))
 
     ASPECT_RATIOS = (
         (0, u'Automatic'),
@@ -149,7 +150,7 @@ class ImageSetPlugin(CMSPlugin, ImageSetTypePluginMixin):
         (-1.0, u'Force native'),
         )
     aspect_ratio = models.FloatField(null=True, choices = ASPECT_RATIOS, default = 0,
-        help_text = "<em>Automatic</em>: native aspect ratio if possible, calculated otherwise")
+        help_text = _("<em>Automatic</em>: native aspect ratio if possible, calculated otherwise"))
 
     LEFT = "left"
     RIGHT = "right"
@@ -158,7 +159,7 @@ class ImageSetPlugin(CMSPlugin, ImageSetTypePluginMixin):
                      )
     float = models.CharField(_("float"), max_length=10, blank=True, null=True, choices=FLOAT_CHOICES)
     items_per_row = models.PositiveSmallIntegerField(blank = True, null = True,
-        help_text = "Only applies to gallery-type plugins")
+        help_text = _("Only applies to gallery-type plugins"))
 
     @property
     def items_have_links(self):
@@ -295,44 +296,44 @@ class ImageSetPlugin(CMSPlugin, ImageSetTypePluginMixin):
 class ImageSetItem(ArkestraGenericPluginItemOrdering, LinkMethodsMixin, models.Model):
     class Meta:
         ordering=('inline_item_ordering', 'id',)
-    plugin = models.ForeignKey(ImageSetPlugin, related_name="imageset_item")
+    plugin = models.ForeignKey(ImageSetPlugin, related_name="imageset_item", verbose_name=_('Plugin'))
     image = FilerImageField(on_delete=models.PROTECT)
     alt_text = models.CharField(null=True, blank=True, max_length=255,
-        help_text = "The image's meaning, message or function (if any). Leave empty for items with links."
+        help_text = _("The image's meaning, message or function (if any). Leave empty for items with links.")
         )
-    auto_image_title = models.BooleanField(_("Auto image title"),
+    auto_image_title = models.BooleanField(verbose_name=_("Auto image title"),
         default=False,
-        help_text = "Use the image's name field as a title")
-    manual_image_title = models.TextField(_("Manual image title"),
+        help_text = _("Use the image's name field as a title"))
+    manual_image_title = models.TextField(verbose_name=_("Manual image title"),
         blank=True, null=True)
-    auto_image_caption = models.BooleanField(_("Auto image caption"),
+    auto_image_caption = models.BooleanField(verbose_name=_("Auto image caption"),
         default=False,
-        help_text = "Use the image's description field as caption")
-    manual_image_caption = models.TextField(_("Manual image caption"),
-        blank=True, null=True)
-
-    auto_link_title = models.BooleanField(_("Auto link title"),
-        default=False,
-        help_text = "Use the link destination's title")
-    manual_link_title = models.TextField(_("Manual link title"),
-        blank=True, null=True)
-    auto_link_description = models.BooleanField(_("Auto link description"),
-        default=False,
-        help_text = "Use the link destination's description metadata")
-    manual_link_description = models.TextField(_("Manual link description"),
+        help_text = _("Use the image's description field as caption"))
+    manual_image_caption = models.TextField(verbose_name=_("Manual image caption"),
         blank=True, null=True)
 
-    destination_content_type = models.ForeignKey(ContentType, verbose_name="Type", related_name = "links_to_%(class)s", null = True, blank = True)
-    destination_object_id = models.PositiveIntegerField(verbose_name="Item", null = True, blank = True)
+    auto_link_title = models.BooleanField(verbose_name=_("Auto link title"),
+        default=False,
+        help_text = _("Use the link destination's title"))
+    manual_link_title = models.TextField(verbose_name=_("Manual link title"),
+        blank=True, null=True)
+    auto_link_description = models.BooleanField(verbose_name=_("Auto link description"),
+        default=False,
+        help_text = _("Use the link destination's description metadata"))
+    manual_link_description = models.TextField(verbose_name=_("Manual link description"),
+        blank=True, null=True)
+
+    destination_content_type = models.ForeignKey(ContentType, verbose_name=_("Type"), related_name = "links_to_%(class)s", null = True, blank = True)
+    destination_object_id = models.PositiveIntegerField(verbose_name=_("Item"), null = True, blank = True)
     destination_content_object = generic.GenericForeignKey('destination_content_type', 'destination_object_id')
 
     def __unicode__(self):
         if self.destination_object_id:
-            return u"%s (links to: %s %s)" % (self.image.label, self.destination_content_type, self.destination_content_object)
+            return _(("%s (links to: %s %s)")) % (self.image.label, self.destination_content_type, self.destination_content_object)
         elif self.image:
             return self.image.label
         else:
-            return u"Image Publication %s" % self.caption
+            return _("Image Publication %s") % self.caption
         return ''
 
     @property
@@ -378,14 +379,14 @@ class EmbeddedVideoSetPlugin(CMSPlugin, ImageSetTypePluginMixin):
             )
         ),
     )
-    width = models.FloatField(choices = IMAGE_WIDTHS, default = 1000.0)
+    width = models.FloatField(choices = IMAGE_WIDTHS, default = 1000.0, verbose_name=_('Width'))
 
     @property
     def active_items(self):
         return self.embeddedvideoset_item.filter(active=True)
 
     def __unicode__(self):
-        return u"embedded-video-set-%s" % self.id
+        return _("embedded-video-set-%s") % self.id
 
     def copy_relations(self, oldinstance):
         for plugin_item in oldinstance.embeddedvideoset_item.all():
@@ -398,19 +399,21 @@ class EmbeddedVideoSetItem(LinkMethodsMixin, ArkestraGenericPluginItemOrdering):
         ordering=('inline_item_ordering', 'id',)
     plugin = models.ForeignKey(
         EmbeddedVideoSetPlugin,
-        related_name="embeddedvideoset_item"
+        related_name="embeddedvideoset_item",
+        verbose_name=_('Plugin')
         )
     SERVICES = [(service, values["name"]) for service,values in VIDEO_HOSTING_SERVICES.items()]
-    service = models.CharField(choices = SERVICES, max_length = 50)
+    service = models.CharField(choices = SERVICES, max_length = 50, verbose_name=_('Service'))
     video_code = models.CharField(max_length=255,
-        help_text = "Not the full URL."
+        help_text = _("Not the full URL."),
+        verbose_name=_('Video code')
         )
-    video_title = models.CharField(_("Title"), max_length=250)
+    video_title = models.CharField(verbose_name=_("Title"), max_length=250)
     # video_caption = models.TextField(
     #     _("Video caption"),
     #     blank=True, null=True
     #     )
-    video_autoplay = models.BooleanField(_("Autoplay"), default=False)
+    video_autoplay = models.BooleanField(verbose_name=_("Autoplay"), default=False)
 
     ASPECT_RATIOS = (
         (3.0, u'3x1'),
@@ -426,7 +429,8 @@ class EmbeddedVideoSetItem(LinkMethodsMixin, ArkestraGenericPluginItemOrdering):
         (0.3, u'1x3'),
         )
     aspect_ratio = models.FloatField(choices = ASPECT_RATIOS, default = 1.333,
-        help_text = "Adjust to match video file"
+        help_text = _("Adjust to match video file"),
+        verbose_name=_("Aspect radio")
         )
 
     def __unicode__(self):

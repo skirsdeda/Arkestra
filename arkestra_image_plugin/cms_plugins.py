@@ -147,11 +147,11 @@ class ImageSetPublisher(SupplyRequestMixin, CMSPluginBase):
 
     def notes(self,instance):
         if not instance.imageset_item.count():
-            message = u"There are currently no items in this set."
+            message = _("There are currently no items in this set.")
         elif instance.imageset_item.count() == 1:
-            message = u"There is currently only one item in this set."
+            message = _("There is currently only one item in this set.")
         else:
-            message = u"There are currently %s items in this set." % instance.imageset_item.count()
+            message = _("There are currently %s items in this set.") % instance.imageset_item.count()
         return message
 
     def render(self, context, imageset, placeholder):
@@ -219,11 +219,11 @@ class EmbeddedVideoPlugin(CMSPluginBase):
 
     def notes(self,instance):
         if not instance.embeddedvideoset_item.count():
-            message = u"There are currently no items in this set."
+            message = _("There are currently no items in this set.")
         elif instance.imageset_item.count() == 1:
-            message = u"There is currently only one item in this set."
+            message = _("There is currently only one item in this set.")
         else:
-            message = u"There are currently %s items in this set." % instance.imageset_item.count()
+            message = _("There are currently %s items in this set.") % instance.imageset_item.count()
         return message
 
     def render(self, context, embeddedvideoset, placeholder):

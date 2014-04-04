@@ -1,6 +1,6 @@
 {% extends "cardiff/medic.html" %}
 
-{% load mptt_tags %}
+{% load mptt_tags i18n %}
 
 {% block columns %}
     @import url("/media/css/_layout/horiz/100.css");
@@ -11,16 +11,16 @@
 {% endblock horizontal_navigation_css %}
 
 {% block title %}
-    <title>External links tree operations</title>
+    <title>{% trans 'External links tree operations' %}</title>
 {% endblock title %}
 
 
 {% block main_page_body %}
-<h3>Summary</h3>
+<h3>{% trans 'Summary' %} </h3>
 	<ul>
-		<li><a href="/housekeeping/external_links_tree/dryrun/">Report only</a></li>
-		<li><a href="/housekeeping/external_links_tree/reset/">Reset ids and trees</a></li>
-		<li><a href="/housekeeping/external_links_tree/save_all/">Save all</a></li>
+		<li><a href="/housekeeping/external_links_tree/dryrun/">{% trans 'Report only' %}</a></li>
+		<li><a href="/housekeeping/external_links_tree/reset/">{% trans 'Reset ids and trees' %}</a></li>
+		<li><a href="/housekeeping/external_links_tree/save_all/">{% trans 'Save all' %}</a></li>
 	</ul>
 <p>{{ links|length }} links were found</p>
 {% full_tree_for_model links.externallink as linktree %}
@@ -28,7 +28,7 @@
 {% for node,structure in linktree|tree_info %}
       {% if structure.new_level %}<ul><li>{% else %}
 	</li><li>{% endif %}
-      <strong>id: {{ node.id }}</strong>, tree: {{ node.tree_id }}, parent: {{ node.parent }}<br />{{ node.title }}, {{ node.url}}
+      <strong>id: {{ node.id }}</strong>,{% trans 'tree:  {{ node.tree_id }}, {% trans 'parent:  {{ node.parent }}<br />{{ node.title }}, {{ node.url}}
       {% for level in structure.closed_levels %}</li></ul>{% endfor %}
    {% endfor %}
 

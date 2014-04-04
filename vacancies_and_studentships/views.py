@@ -7,7 +7,7 @@ from django.http import Http404
 from arkestra_utilities.views import ArkestraGenericView
 
 from contacts_and_people.models import Entity
-
+from django.utils.translation import ugettext_lazy as _
 from models import Studentship, Vacancy
 from lister import VacanciesAndStudentshipsCurrentLister, \
     VacanciesArchiveLister, VacanciesForthcomingLister, \
@@ -28,13 +28,12 @@ class VacanciesAndStudentshipsView(ArkestraGenericView, ):
             )
 
         self.main_page_body_file = "arkestra/generic_lister.html"
-        self.meta = {"description": "Recent vacancies and forthcoming studentships",}
-        self.title = unicode(self.entity) + u" vacancies & studentships"
+        self.meta = {"description": _("Recent vacancies and forthcoming studentships"),}
+        self.title = unicode(self.entity) + _(" vacancies & studentships")
         if MULTIPLE_ENTITY_MODE:
-            self.pagetitle = unicode(self.entity) + u" vacancies & studentships"
+            self.pagetitle = unicode(self.entity) + _(" vacancies & studentships")
         else:
-            self.pagetitle = "Vacancies & studentships"
-        
+            self.pagetitle = _("Vacancies & studentships")
         
         return self.response(request)
 
@@ -105,12 +104,11 @@ class StudentshipsForthcomingView(ArkestraGenericView):
             )
 
         self.main_page_body_file = "arkestra/generic_filter_list.html"
-        self.meta = {"description": "Searchable list of forthcoming studentships",}
-        self.title = u"Forthcoming studentships for %s" % unicode(self.entity)
-        self.pagetitle = u"Forthcoming studentships for %s" % unicode(self.entity)
+        self.meta = {"description": _("Searchable list of forthcoming studentships"),}
+        self.title = _("Forthcoming studentships for %s") % unicode(self.entity)
+        self.pagetitle = _("Forthcoming studentships for %s") % unicode(self.entity)
 
         return self.response(request)
-
 
 def vacancy(request, slug):
     """

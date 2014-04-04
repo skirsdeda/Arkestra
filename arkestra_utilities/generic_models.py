@@ -27,18 +27,18 @@ class ArkestraGenericModel(models.Model):
     # core fields
     title = models.CharField(
         max_length=255,
-        help_text="e.g. Outrage as man bites dog in unprovoked attack"
+        help_text=_("e.g. Outrage as man bites dog in unprovoked attack")
         )
     short_title = models.CharField(
-        max_length=255,  null=True, blank=True,
-        help_text=u"e.g. Man bites dog (if blank, will be copied from Title)"
+        max_length=255, null=True, blank=True,
+        help_text=_(u"e.g. Man bites dog (if blank, will be copied from Title)")
         )
     summary = models.TextField(
         verbose_name="Summary",
         null=False, blank=False,
-        help_text="""
+        help_text=_("""
             e.g. Cardiff man arrested in latest wave of man-on-dog violence
-            (maximum two lines)"""
+            (maximum two lines)""")
         )
     published = models.BooleanField(
         default=False, verbose_name=_(u"Is published"), db_index=True,
@@ -49,7 +49,7 @@ class ArkestraGenericModel(models.Model):
         help_text=_(u"If deselected, this item will not appear in lists")
         )
     body = PlaceholderField(
-        'body', help_text="Not used or required for external items"
+        'body', help_text=_("Not used or required for external items")
         )
     image = FilerImageField(on_delete=models.SET_NULL, null=True, blank=True)
 
@@ -59,28 +59,29 @@ class ArkestraGenericModel(models.Model):
         on_delete=models.SET_DEFAULT,
         default=Entity.objects.default_entity_id(),
         related_name='%(class)s_hosted_events', null=True, blank=True,
-        help_text=u"The entity responsible for publishing this item")
+        help_text=_("The entity responsible for publishing this item"))
     publish_to = models.ManyToManyField(
-        Entity, verbose_name="Also publish to",
+        Entity, verbose_name=_("Also publish to"),
         null=True, blank=True,
         related_name="%(class)s_publish_to",
-        help_text=u"Use sensibly",
+        help_text=_("Use sensibly"),
         )
     please_contact = models.ManyToManyField(
         Person,
         related_name='%(class)s_person',
-        help_text=u"The person to whom enquiries should be directed",
+        help_text=_("The person to whom enquiries should be directed"),
         null=True, blank=True
         )
     IMPORTANCES = (
-        (0, u"Normal"),
-        (1, u"More important"),
-        (10, u"Most important"),
+        (0, _("Normal")),
+        (1, _("More important")),
+        (10, _("Most important")),
         )
     importance = models.PositiveIntegerField(
         null=True, blank=False,
         default=0, choices=IMPORTANCES,
-        help_text=u"Important items will be featured in lists")
+        help_text=_("Important items will be featured in lists"),
+        verbose_name=_('Importance'))
 
     @property
     def has_expired(self):
@@ -149,23 +150,24 @@ class ArkestraGenericPluginOptions(models.Model):
         Entity,
         on_delete=models.SET_NULL,
         null=True, blank=True,
-        help_text="Leave blank for autoselect",
-        related_name="%(class)s_plugin")
+        help_text=_("Leave blank for autoselect"),
+        related_name="%(class)s_plugin",
+        verbose_name=_('Entity'))
     LAYOUTS = (
-        ("sidebyside", u"Side-by-side"),
-        ("stacked", u"Stacked"),
+        ("sidebyside", _("Side-by-side")),
+        ("stacked", _("Stacked")),
         )
-    layout = models.CharField(
-        "Plugin layout",
+    layout = models.CharField(_(
+        "Plugin layout"),
         max_length=25,
         choices=LAYOUTS, default="sidebyside"
         )
     FORMATS = (
-        ("title", u"Title only"),
-        ("details image", u"Details"),
+        ("title", _("Title only")),
+        ("details image", _("Details")),
         )
-    format = models.CharField(
-        "Item format", max_length=25, choices=FORMATS,
+    format = models.CharField(_(
+        "Item format"), max_length=25, choices=FORMATS,
         default="details image"
         )
     heading_level = models.PositiveSmallIntegerField(
@@ -173,25 +175,25 @@ class ArkestraGenericPluginOptions(models.Model):
         default=PLUGIN_HEADING_LEVEL_DEFAULT
         )
     ORDERING = (
-        ("date", u"Date alone"),
-        ("importance/date", u"Importance & date"),
+        ("date", _("Date alone")),
+        ("importance/date", _("Importance & date")),
         )
     order_by = models.CharField(
         max_length=25, choices=ORDERING, default="importance/date"
         )
     LIST_FORMATS = (
-        ("vertical", u"Vertical"),
-        ("horizontal", u"Horizontal"),
+        ("vertical", _("Vertical")),
+        ("horizontal", _("Horizontal")),
         )
-    list_format = models.CharField(
-        "List format", max_length=25,
+    list_format = models.CharField(_(
+        "List format"), max_length=25,
         choices=LIST_FORMATS, default="vertical"
         )
-    group_dates = models.BooleanField("Show date groups", default=True)
-    limit_to = models.PositiveSmallIntegerField(
-        "Maximum number of items",
+    group_dates = models.BooleanField(_("Show date groups"), default=True)
+    limit_to = models.PositiveSmallIntegerField(_(
+        "Maximum number of items"),
         default=5, null=True, blank=True,
-        help_text=u"Leave blank for no limit"
+        help_text=_("Leave blank for no limit")
         )
 
     def sub_heading_level(self):

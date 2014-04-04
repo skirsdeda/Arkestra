@@ -1,6 +1,6 @@
 from django import template
 from django.contrib.contenttypes.models import ContentType
-
+from django.utils.translation import ugettext_lazy as _
 import re
 
 from links.models import ObjectLink
@@ -58,10 +58,10 @@ def get_links(parser, token):
     try:
         tag_name, arg = token.contents.split(None, 1)
     except ValueError:
-        raise template.TemplateSyntaxError, "%r tag requires arguments" % token.contents.split()[0]
+        raise template.TemplateSyntaxError, _("%r tag requires arguments") % token.contents.split()[0]
     m = re.search(r'as (\w+)', arg)
     if not m:
-        raise template.TemplateSyntaxError, "%r tag had invalid arguments" % tag_name
+        raise template.TemplateSyntaxError, _("%r tag had invalid arguments") % tag_name
     var_name = m.groups()[0]
     return LinksNode(var_name)
 

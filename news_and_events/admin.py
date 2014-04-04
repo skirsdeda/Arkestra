@@ -61,7 +61,6 @@ class NewsArticleForm(NewsAndEventsForm):
             self.cleaned_data['sticky_until'] = datetime.date(self.cleaned_data['date'])
         return self.cleaned_data
 
-
 class NewsArticleAdmin(NewsAndEventsAdmin):
     # some general settings
     form = NewsArticleForm
@@ -70,13 +69,13 @@ class NewsArticleAdmin(NewsAndEventsAdmin):
     # inlines = [MembershipInline,]
     fieldset_stickiness = ('How this item should behave in lists', {'fields': ('sticky_until', 'is_sticky_everywhere',)})
     tabs = (
-        ('Basic', {'fieldsets': (fieldsets["basic"], fieldsets["host"], fieldsets["image"], fieldsets["publishing_control"],),}),
-        ('Date & significance', {'fieldsets': (fieldsets["date"], fieldsets["importance"], fieldset_stickiness)}),
-        ('Body', {'fieldsets': (fieldsets["body"],)}),
-        ('Where to Publish', {'fieldsets': (fieldsets["where_to_publish"],)}),
-        ('Related people', {'fieldsets': (fieldsets["people"],)}),
-        ('Links', {'inlines': [ObjectLinkInline]}),
-        ('Advanced Options', {'fieldsets': (fieldsets["url"], fieldsets["slug"],)}),
+        (_('Basic'), {'fieldsets': (fieldsets["basic"], fieldsets["host"], fieldsets["image"], fieldsets["publishing_control"],),}),
+        (_('Date & significance'), {'fieldsets': (fieldsets["date"], fieldsets["importance"], fieldset_stickiness)}),
+        (_('Body'), {'fieldsets': (fieldsets["body"],)}),
+        (_('Where to Publish'), {'fieldsets': (fieldsets["where_to_publish"],)}),
+        (_('Related people'), {'fieldsets': (fieldsets["people"],)}),
+        (_('Links'), {'inlines': [ObjectLinkInline]}),
+        (_('Advanced Options'), {'fieldsets': (fieldsets["url"], fieldsets["slug"],)}),
         )
 
 
@@ -101,10 +100,10 @@ class EventForm(NewsAndEventsForm):
                 if parent.single_day_event:
                     self.cleaned_data["date"] = self.cleaned_data["end_date"] = parent.date
                     self.cleaned_data["single_day_event"] = True
-                    message = u"You didn't say, but I am guessing that this is a single-day event on " + unicode(self.cleaned_data["date"]) + u"."
+                    message = _("You didn't say, but I am guessing that this is a single-day event on ") + unicode(self.cleaned_data["date"]) + u"."
                     messages.add_message(self.request, messages.INFO, message)
                 else:
-                    raise forms.ValidationError(u"I'm terribly sorry, I can't work out when this event is supposed to start. You'll have to enter that information yourself.")
+                    raise forms.ValidationError(_("I'm terribly sorry, I can't work out when this event is supposed to start. You'll have to enter that information yourself."))
 
         # 2. go and do the checks in the parent class
         super(EventForm, self).clean()
@@ -112,29 +111,29 @@ class EventForm(NewsAndEventsForm):
         # 3. check dates
         if self.cleaned_data["date"]:
             if self.cleaned_data["series"]:
-                raise forms.ValidationError("An event with a start date can't also be a series of events. Please correct this.")
+                raise forms.ValidationError(_("An event with a start date can't also be a series of events. Please correct this."))
             elif self.cleaned_data["end_date"] == self.cleaned_data["date"]:
                 self.cleaned_data["single_day_event"] = True
             elif not self.cleaned_data["end_date"]:
                 self.cleaned_data["single_day_event"] = True
-                message = u"You didn't enter an end date, so I have assumed this is a single-day event"
+                message = _("You didn't enter an end date, so I have assumed this is a single-day event")
                 messages.add_message(self.request, messages.INFO, message)
             elif not self.cleaned_data["single_day_event"]:
                 if self.cleaned_data["end_date"] < self.cleaned_data["date"]:
-                    raise forms.ValidationError('This event appears to end before it starts, which is very silly. Please correct the dates.')
+                    raise forms.ValidationError(_('This event appears to end before it starts, which is very silly. Please correct the dates.'))
                 if not self.cleaned_data["start_time"] and self.cleaned_data["end_time"]:
                     self.cleaned_data["end_time"] = None
-                    message = u"You didn't enter a start time, so I deleted the end time. I hope that's OK."
+                    message = _("You didn't enter a start time, so I deleted the end time. I hope that's OK.")
                     messages.add_message(self.request, messages.WARNING, message)
 
             if self.cleaned_data["single_day_event"]:
                 self.cleaned_data["end_date"] = self.cleaned_data["date"]
                 if not self.cleaned_data["start_time"]:
-                    message = u"You have a lovely smile."
+                    message = _("You have a lovely smile.")
                     messages.add_message(self.request, messages.INFO, message)
                     self.cleaned_data["end_time"] = None
                 elif self.cleaned_data["end_time"] and self.cleaned_data["end_time"] < self.cleaned_data["start_time"]:
-                    raise forms.ValidationError('This event appears to end before it starts, which is very silly. Please correct the times.')
+                    raise forms.ValidationError(_('This event appears to end before it starts, which is very silly. Please correct the times.'))
 
             self.cleaned_data['jumps_queue_on'] = self.cleaned_data['jumps_queue_on'] or self.cleaned_data['date']
             if self.cleaned_data['importance'] == 0:
@@ -145,7 +144,7 @@ class EventForm(NewsAndEventsForm):
         # an event without a start date can be assumed to be a series of events
         else:
             self.cleaned_data["series"] = True
-            message = u"You didn't enter a start date, so I will assume this is a series of events."
+            message = _("You didn't enter a start date, so I will assume this is a series of events.")
             messages.add_message(self.request, messages.INFO, message)
             self.cleaned_data['date'] = self.cleaned_data['end_date'] = self.cleaned_data['start_time'] = self.cleaned_data['end_time'] = None
             self.cleaned_data['single_day_event'] = False
@@ -206,35 +205,34 @@ class EventAdmin(NewsAndEventsAdmin, TreeAdmin):
 
 
     # the tabs
-    fieldset_type = ('Type', {'fields': ('type',)},)
-    fieldset_building = ('Building', {'fields': ('building',)},)
-    fieldset_when = ('When', {'fields': ('series', 'single_day_event', ('date', 'start_time'), ('end_date', 'end_time'))})
+    fieldset_type = (_('Type'), {'fields': ('type',)},)
+    fieldset_building = (_('Building'), {'fields': ('building',)},)
+    fieldset_when = (_('When'), {'fields': ('series', 'single_day_event', ('date', 'start_time'), ('end_date', 'end_time'))})
     fieldsets_relationships = (
-        ('Parent & children', {
+        (_('Parent & children'), {
             'fields': ('parent', 'child_list_heading',),},),
-        ('When displaying the children of this item in lists', {
+        (_('When displaying the children of this item in lists'), {
             'fields': ('show_titles', 'display_series_summary',),},),
         )
-    fieldset_registration = ('Registration enquiries', {'fields': ('registration_enquiries',)})
-    fieldset_featuring = ('Featured people', {'fields': ('featuring',)})
-    fieldset_jumpiness = ('How this item should behave in lists', {'fields': ('jumps_queue_on', 'jumps_queue_everywhere')})
+    fieldset_registration = (_('Registration enquiries'), {'fields': ('registration_enquiries',)})
+    fieldset_featuring = (_('Featured people'), {'fields': ('featuring',)})
+    fieldset_jumpiness = (_('How this item should behave in lists'), {'fields': ('jumps_queue_on', 'jumps_queue_everywhere')})
     tabs = (
-            ('Basic', {'fieldsets': (fieldsets["basic"], fieldset_type, fieldsets["host"], fieldsets["image"], fieldsets["publishing_control"],)}),
-            ('Date & significance', {'fieldsets':
+            (_('Basic'), {'fieldsets': (fieldsets["basic"], fieldset_type, fieldsets["host"], fieldsets["image"], fieldsets["publishing_control"],)}),
+            (_('Date & significance'), {'fieldsets':
                 (
                     fieldset_when,
                     fieldsets["importance"],
                     fieldset_jumpiness,)}
                     ),
-            ('Location', {'fieldsets': (fieldset_building, fieldsets["location"],)}),
-            ('Parent & children', {'fieldsets': fieldsets_relationships}),
-            ('Body', {'fieldsets': (fieldsets["body"],)}),
-            ('Where to Publish', {'fieldsets': (fieldsets["where_to_publish"],)}),
-            ('People', {'fieldsets': (fieldset_featuring, fieldsets["people"], fieldset_registration)}),
-            ('Links', {'inlines': (ObjectLinkInline,),}),
-            ('Advanced Options', {'fieldsets': (fieldsets["url"], fieldsets["slug"],)}),
+            (_('Location'), {'fieldsets': (fieldset_building, fieldsets["location"],)}),
+            (_('Parent & children'), {'fieldsets': fieldsets_relationships}),
+            (_('Body'), {'fieldsets': (fieldsets["body"],)}),
+            (_('Where to Publish'), {'fieldsets': (fieldsets["where_to_publish"],)}),
+            (_('People'), {'fieldsets': (fieldset_featuring, fieldsets["people"], fieldset_registration)}),
+            (_('Links'), {'inlines': (ObjectLinkInline,),}),
+            (_('Advanced Options'), {'fieldsets': (fieldsets["url"], fieldsets["slug"],)}),
         )
-
 
 class EventTypeAdmin(admin.ModelAdmin):
     pass

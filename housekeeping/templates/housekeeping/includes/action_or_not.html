@@ -1,8 +1,9 @@
+{% load i18n %}
 {% ifnotequal execute "convert" %}
-    <p>This is a <strong>dry run</strong>. Nothing has been changed.</p>
-    <p>Please check the results.</p>
-	<ul><li><a href="/housekeeping/{{ task }}/execute/">Execute</a></li> <li><a href="/housekeeping/{{ task }}/dryrun/">Dry run</a></li></ul>
+    <p>{% trans 'This is a' %} <strong>{% trans 'dry run' %}</strong>. {% trans 'Nothing has been changed.' %}</p>
+    <p>{% trans 'Please check the results.' %}</p>
+	<ul><li><a href="/housekeeping/{{ task }}/execute/">{% trans 'Execute' %}</a></li> <li><a href="/housekeeping/{{ task }}/dryrun/">{% trans 'Dry run' %}</a></li></ul>
 {% else %}
-    <p><strong><a href="/housekeeping/{{ task }}/dryrun/">Dry run</a></strong></p>. <p>It's probably too late though.</p>
+    <p><strong><a href="/housekeeping/{{ task }}/dryrun/">{% trans 'Dry run' %}</a></strong></p>. <p>{% trans "It's probably too late though." %}</p>
 
 {% endifnotequal %}  

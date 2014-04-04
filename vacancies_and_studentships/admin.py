@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib import admin, messages
 from django.db.models import ForeignKey
-
+from django.utils.translation import ugettext_lazy as _
 from cms.admin.placeholderadmin import PlaceholderAdmin
 
 from widgetry import fk_lookup
@@ -57,13 +57,13 @@ class VacancyAdmin(VacancyStudentshipAdmin):
     fieldset_vacancy = ('', {'fields': ('salary', 'job_number')})
         
     tabs = (
-            ('Basic', {'fieldsets': (fieldsets["basic"], fieldsets["host"], fieldset_vacancy, fieldsets["image"], fieldsets["publishing_control"],)}),
-            ('Date & significance', {'fieldsets': (fieldsets["date"], fieldsets["importance"])}),
-            ('Body', {'fieldsets': (fieldsets["body"],)}),
-            ('Where to Publish', {'fieldsets': (fieldsets["where_to_publish"],),}),
-            ('Please contact', {'fieldsets': (fieldsets["people"],)}),
-            ('Links', {'inlines': (ObjectLinkInline,),}),
-            ('Advanced Options', {'fieldsets': (fieldsets["url"], fieldsets["slug"],)}),        
+            (_('Basic'), {'fieldsets': (fieldsets["basic"], fieldsets["host"], fieldset_vacancy, fieldsets["image"], fieldsets["publishing_control"],)}),
+            (_('Date & significance'), {'fieldsets': (fieldsets["date"], fieldsets["importance"])}),
+            (_('Body'), {'fieldsets': (fieldsets["body"],)}),
+            (_('Where to Publish'), {'fieldsets': (fieldsets["where_to_publish"],),}),
+            (_('Please contact'), {'fieldsets': (fieldsets["people"],)}),
+            (_('Links'), {'inlines': (ObjectLinkInline,),}),
+            (_('Advanced Options'), {'fieldsets': (fieldsets["url"], fieldsets["slug"],)}),        
         ) 
          
 
@@ -83,14 +83,14 @@ class StudentshipAdmin(VacancyStudentshipAdmin):
 
     fieldset_supervision = ('', {'fields': ('supervisors',)})
     tabs = (
-            ('Basic', {'fieldsets': (fieldsets["basic"], fieldsets["host"], fieldsets["image"], fieldsets["publishing_control"],)}),
-            ('Date & significance', {'fieldsets': (fieldsets["date"], fieldsets["importance"])}),
-            ('Body', {'fieldsets': (fieldsets["body"],)}),
-            ('Where to Publish', {'fieldsets': (fieldsets["where_to_publish"],),}),
-            ('Supervisors', {'fieldsets': (fieldset_supervision,)}),
-            ('Please contact', {'fieldsets': (fieldsets["people"],)}),
-            ('Links', {'inlines': (ObjectLinkInline,),}),
-            ('Advanced Options', {'fieldsets': (fieldsets["url"], fieldsets["slug"],)}),        
+            (_('Basic'), {'fieldsets': (fieldsets["basic"], fieldsets["host"], fieldsets["image"], fieldsets["publishing_control"],)}),
+            (_('Date & significance'), {'fieldsets': (fieldsets["date"], fieldsets["importance"])}),
+            (_('Body'), {'fieldsets': (fieldsets["body"],)}),
+            (_('Where to Publish'), {'fieldsets': (fieldsets["where_to_publish"],),}),
+            (_('Supervisors'), {'fieldsets': (fieldset_supervision,)}),
+            (_('Please contact'), {'fieldsets': (fieldsets["people"],)}),
+            (_('Links'), {'inlines': (ObjectLinkInline,),}),
+            (_('Advanced Options'), {'fieldsets': (fieldsets["url"], fieldsets["slug"],)}),        
         ) 
 
     # autocomplete fields

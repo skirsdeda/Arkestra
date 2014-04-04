@@ -2,6 +2,7 @@ from cms.models.fields import PlaceholderField
 from django.contrib.admin.models import LogEntry
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 class ArkestraUser(User):
     class Meta:
@@ -23,11 +24,15 @@ class ArkestraUser(User):
         
 class Insert(models.Model):
     insertion_point=models.SlugField(unique=True, max_length=60,
-        help_text="Matches the parameter passed to the {% insert %} tag in "
-        "your templates")
-    content = PlaceholderField('insert')
+        help_text=_("Matches the parameter passed to the {% insert %} tag in "
+        "your templates"), verbose_name=_('Insertion point'))
+    content = PlaceholderField('insert', verbose_name=_('Content'))
     description =  models.TextField(max_length=256, null=True, blank=False,
-        help_text="To help remind you what this is for")
+        help_text=_("To help remind you what this is for"), verbose_name=_('Description'))
 
+    class Meta:
+        verbose_name = _('Insert')
+        verbose_name_plural = _("Inserts")
+    
     def __unicode__(self):
         return self.insertion_point

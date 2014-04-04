@@ -1,51 +1,51 @@
 {% extends "housekeeping/housekeeping.html" %}
 
 {% block title %}
-    <title>Arkestra admin statistics</title>
+    <title>{% trans 'Arkestra admin statistics' %}</title>
 {% endblock title %}
 
 {% block operations %}
 <div class = "statistics">
-    <h3>Pages</h3>
+    <h3>{% trans 'Pages' %}</h3>
     <dl>
-        <dt>Pages</dt>
+        <dt>{% trans 'Pages' %}</dt>
         <dd>{{pages}}</dd>
-        <dt>Plugins</dt>
+        <dt>{% trans 'Plugins' %}</dt>
         <dd>{{plugins}}</dd>
     </dl>    
-    <h3>Contacts & people</h3>
+    <h3>{% trans 'Contacts & people' %}</h3>
     <dl>
-        <dt>People</dt>
+        <dt>{% trans 'People' %}</dt>
         <dd>{{people}}</dd>
-        <dt>Entities</dt>
+        <dt>{% trans 'Entities' %}</dt>
         <dd>{{entities}}</dd>
-        <dt>Roles</dt>
+        <dt>{% trans 'Roles' %}</dt>
         <dd>{{roles}}</dd>
     </dl>    
-    <h3>News & events</h3>
+    <h3>{% trans 'News & events' %}</h3>
     <dl>    
-        <dt>News articles</dt>
+        <dt>{% trans 'News articles' %}</dt>
         <dd>{{newsarticles}}</dd>
-        <dt>Events</dt>
+        <dt>{% trans 'Events' %}</dt>
         <dd>{{events}}</dd>    
     </dl>    
     <div class = "row columns2">
-        <h3>Auth</h3>
+        <h3>{% trans 'Auth' %}</h3>
         <div class = "column firstcolumn">
-            <h4>Users</h4>
+            <h4>{% trans 'Users' %}</h4>
             <dl>
                 {% for user in users %}
                     <dt><strong>{{ user.get_full_name }}</strong> <em>{{user}}</em>: {{ user.groups.count }}</dt>
                     {% for group in user.groups.all %}
                         <dd>{{ group }}</dd>
                     {% endfor %}
-                    <dd>last login: {{ user.last_login|date:"D d M Y" }}</dd>
-                    <dd>last edit: {{ user.last_editxxx }}</dd>
+                    <dd>{% trans 'last login:' %} {{ user.last_login|date:"D d M Y" }}</dd>
+                    <dd>{% trans 'last edit:' %} {{ user.last_editxxx }}</dd>
                 {% endfor %}
             </dl>
         </div>
         <div class = "column lastcolumn">
-            <h4>Groups</h4>
+            <h4>{% trans 'Groups' %}</h4>
             <dl>
                 {% for group in groups %}
                     <dt><strong>{{ group }}</strong>: {{ group.user_set.count }}</dt>

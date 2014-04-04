@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-16 09:12+0100\n"
+"POT-Creation-Date: 2014-01-16 20:01+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,115 +16,201 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: cms_plugins.py:12
-msgid "Image"
+#: cms_plugins.py:156 cms_plugins.py:228
+msgid "There are currently no items in this set."
 msgstr ""
 
-#: cms_plugins.py:21
-msgid "Image resizing options"
+#: cms_plugins.py:158 cms_plugins.py:230
+msgid "There is currently only one item in this set."
 msgstr ""
 
-#: cms_plugins.py:31
-msgid "More"
+#: cms_plugins.py:160 cms_plugins.py:232
+#, python-format
+msgid "There are currently %s items in this set."
 msgstr ""
 
-#: models.py:15
+#: models.py:107
+msgid "Basic"
+msgstr ""
+
+#: models.py:108
+msgid "Multiple image gallery"
+msgstr ""
+
+#: models.py:109
+msgid "Lightbox with gallery"
+msgstr ""
+
+#: models.py:110
+msgid "Lightbox without gallery"
+msgstr ""
+
+#: models.py:111
+msgid "Slider"
+msgstr ""
+
+#: models.py:113
+msgid "Kind"
+msgstr ""
+
+#: models.py:133
+msgid "Width of set"
+msgstr ""
+
+#: models.py:135
+msgid "Only applies when <strong>Aspect ratio</strong> is <em>Automatic</em>"
+msgstr ""
+
+#: models.py:136
+msgid "Height"
+msgstr ""
+
+#: models.py:154
+msgid ""
+"<em>Automatic</em>: native aspect ratio if possible, calculated otherwise"
+msgstr ""
+
+#: models.py:158
 msgid "left"
 msgstr ""
 
-#: models.py:16
+#: models.py:159
 msgid "right"
 msgstr ""
 
-#: models.py:18
-msgid "caption"
+#: models.py:161
+msgid "float"
 msgstr ""
 
-#: models.py:20
-msgid "alternative image url"
+#: models.py:163
+msgid "Only applies to gallery-type plugins"
 msgstr ""
 
-#: models.py:21
-msgid "alt text"
+#: models.py:300 models.py:404
+msgid "Plugin"
 msgstr ""
 
-#: models.py:22 models.py:80
-msgid "thumbnail option"
+#: models.py:303
+msgid ""
+"The image's meaning, message or function (if any). Leave empty for items "
+"with links."
 msgstr ""
 
-#: models.py:23
-msgid "use automatic scaling"
+#: models.py:305
+msgid "Auto image title"
 msgstr ""
 
-#: models.py:24
-msgid "tries to auto scale the image based on the placeholder context"
+#: models.py:307
+msgid "Use the image's name field as a title"
 msgstr ""
 
-#: models.py:25 models.py:73
-msgid "width"
+#: models.py:308
+msgid "Manual image title"
 msgstr ""
 
-#: models.py:26 models.py:74
-msgid "height"
+#: models.py:310
+msgid "Auto image caption"
 msgstr ""
 
-#: models.py:27 models.py:75
-msgid "crop"
+#: models.py:312
+msgid "Use the image's description field as caption"
 msgstr ""
 
-#: models.py:28 models.py:76
-msgid "upscale"
+#: models.py:313
+msgid "Manual image caption"
 msgstr ""
 
-#: models.py:29
-msgid "image alignment"
+#: models.py:316
+msgid "Auto link title"
 msgstr ""
 
-#: models.py:31
-msgid "link"
+#: models.py:318
+msgid "Use the link destination's title"
 msgstr ""
 
-#: models.py:32 models.py:34
-msgid "if present image will be clickable"
+#: models.py:319
+msgid "Manual link title"
 msgstr ""
 
-#: models.py:35
-msgid "page link"
+#: models.py:321
+msgid "Auto link description"
 msgstr ""
 
-#: models.py:36
-msgid "description"
+#: models.py:323
+msgid "Use the link destination's description metadata"
 msgstr ""
 
-#: models.py:39
-msgid "filer image"
+#: models.py:324
+msgid "Manual link description"
 msgstr ""
 
-#: models.py:40
-msgid "filer images"
+#: models.py:327
+msgid "Type"
 msgstr ""
 
-#: models.py:46
-msgid "Either an image or an image url must be selected."
+#: models.py:328
+msgid "Item"
 msgstr ""
 
-#: models.py:53
+#: models.py:337
 #, python-format
-msgid "Image Publication %(caption)s"
+msgid "Image Publication %s"
 msgstr ""
 
-#: models.py:72
-msgid "name"
+#: models.py:383
+msgid "Width"
 msgstr ""
 
-#: models.py:73
-msgid "width in pixel."
+#: models.py:390
+#, python-format
+msgid "embedded-video-set-%s"
 msgstr ""
 
-#: models.py:74
-msgid "height in pixel."
+#: models.py:407
+msgid "Service"
 msgstr ""
 
-#: models.py:81
-msgid "thumbnail options"
+#: models.py:409
+msgid "Not the full URL."
+msgstr ""
+
+#: models.py:410
+msgid "Video code"
+msgstr ""
+
+#: models.py:412
+msgid "Title"
+msgstr ""
+
+#: models.py:417
+msgid "Autoplay"
+msgstr ""
+
+#: models.py:433
+msgid "Adjust to match video file"
+msgstr ""
+
+#: models.py:434
+msgid "Aspect radio"
+msgstr ""
+
+#: templates/arkestra_image_plugin/lightbox_item.html:20
+msgid "Read more"
+msgstr ""
+
+#: templates/arkestra_image_plugin/lightbox_item.html:20
+msgid "about"
+msgstr ""
+
+#: templates/arkestra_image_plugin/includes/imageset_item.html:8
+msgid "Read more..."
+msgstr ""
+
+#: templates/arkestra_image_plugin/includes/imageset_item.html:15
+msgid "images"
+msgstr ""
+
+#: templates/arkestra_image_plugin/includes/imageset_item.html:43
+#: templates/cmsplugin_filer_image/image.html:5
+msgid "Author"
 msgstr ""
