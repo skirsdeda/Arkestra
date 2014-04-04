@@ -9,11 +9,7 @@ class URLModelMixin(models.Model):
     class Meta:
         abstract = True
 
-    # field no longer used, to be deleted
-    url = models.URLField(
-        null=True, blank=True, verify_exists=True,
-        help_text=_("Use <strong>only</strong> for external items.")
-        )
+    # sublasses *must* be provided with a view_name attribute
 
     # url fields
     external_url = models.ForeignKey(
@@ -39,10 +35,8 @@ class URLModelMixin(models.Model):
     def get_absolute_url(self):
         if self.external_url:
             return self.external_url.url
-        elif self.url_path in ["news", "event", "vacancy", "studentship"]:
-            return reverse(self.url_path, kwargs={"slug": self.slug})
         else:
-            return "/%s/%s/" % (self.url_path, self.slug)
+            return reverse(self.view_name, kwargs={"slug": self.slug})
 
 
 class LocationModelMixin(models.Model):
@@ -54,6 +48,6 @@ class LocationModelMixin(models.Model):
         max_length=255, null=True, blank=True
         )
     access_note = models.CharField(
-        help_text=_("Notes on access/visiting hours/etc"),
+        help_text=_(u"Notes on access/visiting hours/etc"),
         max_length=255, null=True, blank=True
         )

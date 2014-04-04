@@ -296,6 +296,9 @@ class EntityManager(TreeManager):
 class Entity(MPTTModel, EntityLite, CommonFields):
     objects = EntityManager()
 
+    # URLModelMixin's get_absolute_url() requires a view_name
+    view_name = "contact-entity"
+
     short_name = models.CharField(
         blank=True, help_text=_("e.g. Haematology"),
         max_length=100, null=True, verbose_name=_("Short name for menus")
@@ -436,14 +439,6 @@ class Entity(MPTTModel, EntityLite, CommonFields):
     def __unicode__(self):
         return self.name
 
-    def get_absolute_url(self):
-        if self.external_url:
-            return self.external_url.url
-        elif self.get_website:
-            return reverse("contact-entity", kwargs={"slug": self.slug})
-        else:
-            return reverse("contact-entity-base")
-
     @property
     def get_real_ancestor(self):
         """
@@ -533,7 +528,7 @@ class Entity(MPTTModel, EntityLite, CommonFields):
         else:  # except
             return Entity.objects.base_entity().get_website
 
-    def get_auto_page_url(self, kind):
+    def get_auto_page_url(self, view_name):
         """
         Returns a URL not for the entity, but for its /contact page,
         /news-and-events, or whatever.
@@ -541,21 +536,18 @@ class Entity(MPTTModel, EntityLite, CommonFields):
         If the entity is the base entity, doesn't add the entity slug to
         the URL
         """
+        if not view_name:
+            return ""
         # external entities don't have info pages
-        if self.external_url:
+        elif self.external_url:
             return ""
         # info pages for base entity
         elif self == Entity.objects.base_entity():
-            try:
-                return reverse(kind+"-base")
-            except NoReverseMatch:
-                return "/%s/" % kind
+            return reverse(view_name)
         # info pages for other entities
         else:
-            try:
-                return reverse(kind, kwargs={"slug": self.slug})
-            except NoReverseMatch:
-                return "/%s/%s/" % (kind, self.slug)
+            return reverse(view_name, kwargs={"slug": self.slug})
+
 
     def get_template(self):
         """
@@ -731,6 +723,10 @@ class PersonManager(models.Manager):
 
 class Person(PersonLite, CommonFields):
     objects = PersonManager()
+
+    # URLModelMixin's get_absolute_url() requires a view_name
+    view_name = "contact-person"
+
     user = models.ForeignKey(
         User,
         related_name='person_user',
@@ -798,12 +794,6 @@ class Person(PersonLite, CommonFields):
                 self.surname
             ) if name_part
         )
-
-    def get_absolute_url(self):
-        if self.external_url:
-            return self.external_url.url
-        else:
-            return reverse("contact-person", kwargs={"slug": self.slug})
 
     @property
     def get_role(self):
@@ -1011,8 +1001,8 @@ class Membership(models.Model):
 class EntityAutoPageLinkPluginEditor(CMSPlugin):
     AUTO_PAGES = {
         'contacts-and-people': (
-            _('Contacts & people'),
-            'contact',
+            _(u'Contacts & people'),
+            'contact-entity',
             'contacts_page_menu_title',
             'auto_contacts_page'
             ),

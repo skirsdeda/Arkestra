@@ -18,11 +18,11 @@ from models import Vacancy, Studentship
 class VacancyStudentshipForm(GenericModelForm):
     # a shared form for vacancies & studentships
     pass
-    
+
 class VacancyStudentshipAdmin(GenericModelAdmin, ModelAdminWithTabsAndCMSPlaceholder):
     # inlines = (ObjectLinkInline,)
-    exclude = ('description', 'url',)
-    search_fields = ['short_title','title','summary', 'slug','url']
+    exclude = ('description',)
+    search_fields = ['short_title','title','summary', 'slug']
     list_display = ('short_title', 'hosted_by', 'date',)
     list_display = ('short_title', 'date', 'hosted_by',)
     list_filter = ('date', HostedByFilter)
@@ -33,7 +33,7 @@ class VacancyStudentshipAdmin(GenericModelAdmin, ModelAdminWithTabsAndCMSPlaceho
         ]
     filter_horizontal = (
         'please_contact',
-        'publish_to', 
+        'publish_to',
         )
     prepopulated_fields = {
         'slug': ('title',)
@@ -43,11 +43,11 @@ class VacancyStudentshipAdmin(GenericModelAdmin, ModelAdminWithTabsAndCMSPlaceho
         return super(ModelAdminWithTabsAndCMSPlaceholder, self).media
     media = property(_media)
 
-        
+
 class VacancyForm(VacancyStudentshipForm):
     class Meta(VacancyStudentshipForm.Meta):
         model = Vacancy
-    
+
 class VacancyAdmin(VacancyStudentshipAdmin):
     # def __init__(self):
     #     super(VacancyAdmin, self).__init__(self)
@@ -55,7 +55,7 @@ class VacancyAdmin(VacancyStudentshipAdmin):
 
     form = VacancyForm
     fieldset_vacancy = ('', {'fields': ('salary', 'job_number')})
-        
+
     tabs = (
             (_('Basic'), {'fieldsets': (fieldsets["basic"], fieldsets["host"], fieldset_vacancy, fieldsets["image"], fieldsets["publishing_control"],)}),
             (_('Date & significance'), {'fieldsets': (fieldsets["date"], fieldsets["importance"])}),
@@ -69,15 +69,15 @@ class VacancyAdmin(VacancyStudentshipAdmin):
 
 class StudentshipForm(VacancyStudentshipForm):
     class Meta(VacancyStudentshipForm.Meta):
-        model = Studentship        
+        model = Studentship
 
 
 # class StudentshipAdmin(admin_tabs_extension.ModelAdminWithTabs):
 class StudentshipAdmin(VacancyStudentshipAdmin):
     form = StudentshipForm
     filter_horizontal = (
-        'publish_to', 
-        'supervisors', 
+        'publish_to',
+        'supervisors',
         'please_contact',
     )
 
@@ -92,7 +92,6 @@ class StudentshipAdmin(VacancyStudentshipAdmin):
             (_('Links'), {'inlines': (ObjectLinkInline,),}),
             (_('Advanced Options'), {'fieldsets': (fieldsets["url"], fieldsets["slug"],)}),        
         ) 
-
     # autocomplete fields
     related_search_fields = [
         'hosted_by',

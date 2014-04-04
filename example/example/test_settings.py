@@ -21,7 +21,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'example.db',                      # Or path to database file if using sqlite3.
+        'NAME': 'test_example.db',                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -179,8 +179,6 @@ INSTALLED_APPS = (
     'links',
     'arkestra_utilities.widgets.combobox',
     'arkestra_image_plugin',
-    # 'publications',
-    # 'symplectic',
     'video',
     'housekeeping',
 
@@ -193,7 +191,7 @@ INSTALLED_APPS = (
     'typogrify',
     'filer',
     'widgetry',
-    'south',
+    # 'south', # don't leave this disabled
     'treeadmin',
     'pagination',
 
@@ -324,10 +322,6 @@ LANGUAGES = (
 ('cy', gettext('Cymraeg')),
 )
 
-# ------------------------ WYMeditor/SemanticEditor
-
-# these override the settings in cms.plugins.text.settings
-
 WYM_TOOLS = ",\n".join([
     "{'name': 'Italic', 'title': 'Emphasis', 'css': 'wym_tools_emphasis'}",
     "{'name': 'Bold', 'title': 'Strong', 'css': 'wym_tools_strong'}",
@@ -353,4 +347,23 @@ WYM_CONTAINERS = ",\n".join([
    # "{'name': 'TH', 'title': 'Table_Header', 'css': 'wym_containers_th'}", # not ready for this yet
 ])
 
-from arkestra_settings import *# import pdb; pdb.set_trace()
+ARKESTRA_BASE_ENTITY = 1
+
+MULTIPLE_ENTITY_MODE = True
+
+USE_CELERY_FOR_VIDEO_ENCODING = False
+
+SEMANTICEDITOR_MEDIA_URL = os.path.join(STATIC_URL, "semanticeditor/")
+
+PERMITTED_FILETYPES = {
+    "pdf": "Portable Document Format",
+    "txt": "Plain text",
+    "doc": "MS Word (avoid using if possible)",
+    "rtf": "Rich Text Format",
+    "csv": "Comma-separated values",
+    }
+
+PAGE_TITLE_HEADING_LEVEL = 1
+
+IN_BODY_HEADING_LEVEL = 2
+PLUGIN_HEADING_LEVEL_DEFAULT = 2
