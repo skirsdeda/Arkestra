@@ -34,6 +34,12 @@ urlpatterns = patterns(
         view="people",
         name="contact-people-letter"
         ),
+    # common people search
+    url(
+        r"^contacts$",
+        view="people_search",
+        name="contact-people-search"
+        ),
 
     # main contacts & people page
     url(
@@ -41,6 +47,10 @@ urlpatterns = patterns(
         view="contacts_and_people",
         name="contact-entity"
         ),
+
+    #ajax
+    url(r"^ajax_people_search/$",
+        view="ajax_people_search"),
 
     # news, events, vacancies, studentships
     (r'^', include('news_and_events.urls')),

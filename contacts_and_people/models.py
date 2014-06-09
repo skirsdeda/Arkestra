@@ -470,7 +470,7 @@ class Entity(MPTTModel, EntityLite, CommonFields):
         Department of XXX and YYY, School of ZZZ)
         """
         if self.abstract_entity:
-            return
+            return []
         else:
             ancestors = []
             showparent = self.display_parent
@@ -483,6 +483,18 @@ class Entity(MPTTModel, EntityLite, CommonFields):
             return ancestors
 
     @property
+    def get_postal_address(self):
+        """
+        Return postal address of the entity
+        """
+        building = self.get_building
+        if building:
+            if self.building_recapitulates_entity_name:
+                return building.get_postal_address[1:]
+            return building.get_postal_address
+        return ''
+
+    @property
     def get_full_address(self):
         """
         Returns the full address of the entity
@@ -491,14 +503,9 @@ class Entity(MPTTModel, EntityLite, CommonFields):
             return []
         else:
             address = self._get_institutional_address
-            building = self.get_building
-            if building:
-                if self.building_recapitulates_entity_name:
-                    address.extend(building.get_postal_address[1:])
-                else:
-                    address.extend(building.get_postal_address)
-                return address
-
+            address.extend(self.get_postal_address)
+            return address
+    
     @property
     def get_website(self):
         """

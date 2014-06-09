@@ -5,10 +5,9 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 
 from links.link_functions import object_links
-
 from models import Person, Building, Membership, Entity
 
-
+from django.utils import simplejson
 from django.conf import settings
 
 applications = getattr(settings, 'INSTALLED_APPS')
@@ -151,6 +150,40 @@ def people(request, slug=getattr(Entity.objects.base_entity(), "slug", None), le
         RequestContext(request),
     )
 
+def people_search(request):
+    """
+    People search accross all entities (uses ajax_people_search view)
+    """
+    entity = Entity.objects.base_entity()
+    # for the menu, because next we mess up the path
+    request.auto_page_url = entity.get_auto_page_url("contact-entity")
+    # request.path = entity.get_website.get_absolute_url() # for the menu, so it knows where we are
+    request.current_page = entity.get_website
+    template = entity.get_template()
+    main_page_body_file = "includes/people_search.html"
+    # meta values - title and meta
+    meta = {
+        u"description": _("Contact search"),
+        }
+    title = _("Contact search")
+    # content values
+    # --
+
+    return render_to_response(
+        "arkestra_utilities/entity_auto_page.html",
+        {
+            "entity":entity,
+            "pagetitle": entity,
+            "entity.website.template": template,
+            "main_page_body_file": main_page_body_file,
+
+            "title": title,
+            "meta": meta,
+
+        },
+        RequestContext(request),
+    )
+    
 def publications(request, slug):
     entity = Entity.objects.get(slug=slug)
     request.current_page = entity.website
@@ -417,3 +450,47 @@ def ajaxGetMembershipForPerson(request):
                                  '</option>')
     #Done
     return response
+
+def ajax_people_search(request):
+    from django.db.models import Count
+    
+    search_terms = request.GET.get('search_terms')
+    obj_skip = int(request.GET.get('obj_skip', 0))
+    obj_return = int(request.GET.get('obj_return', 20))
+    get_entities_list = bool(request.GET.get('get_entities_list', False))
+    # naive search by surname only for now
+    people = Person.objects.filter(surname__icontains=search_terms)
+    entities = Entity.objects.filter(members__in=people).select_related('building').annotate(Count('members'))
+    people_details = people.select_related('member_of').prefetch_related('phone_contacts')
+    people_view = people_details[obj_skip:obj_skip+obj_return]
+
+    entities_to_ret = []
+    if get_entities_list:
+        for e in entities:
+            e_t_r = {
+                'name': e.name,
+                'inst_address': [ee.name for ee in e._get_institutional_address],
+                'postal_address': e.get_postal_address,
+                'members_count': e.members__count,
+            }
+            entities_to_ret.append(e_t_r)
+
+    people_to_ret = []
+    for p in people_view:
+        p_t_r = {
+            'name': unicode(p),
+            'email': p.email,
+            'phones': ', '.join(unicode(pc) for pc in p.phone_contacts.all()),
+            'role': p.get_role.role if p.get_role else '',
+            'entity_id': p.get_entity.pk if p.get_entity else '',
+        }
+        people_to_ret.append(p_t_r)
+
+    ret = {
+        'entities': entities_to_ret,
+        'people': people_to_ret,
+    }
+    return http.HttpResponse(content=simplejson.dumps(ret, ensure_ascii=False, indent=4), mimetype='application/json; charset=utf-8')
+    
+
+

@@ -1,0 +1,58 @@
+{% comment %}
+
+Used by: views.people_search
+
+Lists entities and people that match search term.
+
+{% endcomment %}
+{% load i18n entity_tags %}
+{% block scripts %}
+<script type="text/javascript">
+{% autoescape off %}
+ $().ready( function() {
+     $('#search_button').click( function() {
+         var search_terms = $('#search_terms').val();
+         if (search_terms) {
+             var get_args = {
+                 "search_terms": search_terms,
+                 "get_entities_list": 1,
+                 "obj_return": 50,
+             };
+             $.getJSON( "/ajax_people_search/?", get_args, function(data) {
+                 $('#entities_results_placeholder').html('<ul id="entities"></ul>');
+                 //alert(data.entities[0].name);
+                 $.each(data.entities, function(i, entity) {
+                     $('<li>'+entity.name+' ('+entity.members_count+')</li>').appendTo('#entities');
+                 });
+
+                 $('#people_results_placeholder').html('<ul id="people"></ul>');
+                 $.each(data.people, function(i, person) {
+                     $('<li>'+person.name+'</li>').appendTo('#people');
+                 });
+             });
+         }
+     });
+ });
+{% endautoescape %}
+</script>
+{% endblock %}
+<div class="row">
+    <h1>{% trans "Contacts" %}</h1>
+    <p>{% trans "Kontaktų paieškoje galite rasti..." %}</p>
+    <form>
+    <input id="search_terms" name="search_terms" type="text"/>
+    <input type="button" id="search_button" name="search" value="{% trans "Search" %}"/>
+    </form>
+    <p>pvz. Jonas</p>
+</div>
+<div class="row">
+    <h2>{% trans "Results" %}</h2>
+</div>
+<div class="columns2 row">
+    <div class="column firstcolumn">
+        <div id="entities_results_placeholder"/>
+    </div>
+    <div class="column secondcolumn">
+        <div id="people_results_placeholder"/>
+    </div>
+</div>
