@@ -9,27 +9,81 @@ Lists entities and people that match search term.
 {% block scripts %}
 <script type="text/javascript">
 {% autoescape off %}
- $().ready( function() {
+
+var AJAX_PAGING = 50
+var res_entities_cache = {}
+var res_search_terms_cache = '';
+var res_page_num_cache = 0;
+
+function ajax_people_search(search_terms, page_num, ret_func)
+{
+    if (!search_terms)
+        return;
+    var get_entities_list = 0;
+    if (page_num == 1)
+        get_entities_list = 1;
+    var get_args = {
+        "search_terms": search_terms,
+        "get_entities_list": get_entities_list,
+        "obj_return": AJAX_PAGING,
+        "obj_skip": AJAX_PAGING * (page_num-1), 
+    };
+    $.getJSON( "/ajax_people_search/?", get_args, ret_func);
+}
+
+function ajax_person_row_render(person)
+{
+     var assoc_entity = { 'inst_address': [], 'postal_address': [], };
+     if (res_entities_cache.hasOwnProperty(person.entity_id))
+         assoc_entity = res_entities_cache[person.entity_id];
+     var row = '<tr><td>'+person.name+'</td>';
+     var inst_addr = assoc_entity.inst_address.join('<br/>');
+     if (inst_addr)
+         inst_addr += ', <br/>';
+     inst_addr += person.role;
+     row += '<td>'+inst_addr+'</td>';
+     var contact_details = person.phones;
+     if (contact_details)
+         contact_details += '<br/>';
+     contact_details += person.email+'<br/>';
+     contact_details += assoc_entity.postal_address.join(', ');
+     row += '<td>'+contact_details+'</td></tr>';
+
+     $(row).appendTo('#people');
+}
+
+ $(document).ready( function() {
      $('#search_button').click( function() {
          var search_terms = $('#search_terms').val();
-         if (search_terms) {
-             var get_args = {
-                 "search_terms": search_terms,
-                 "get_entities_list": 1,
-                 "obj_return": 50,
-             };
-             $.getJSON( "/ajax_people_search/?", get_args, function(data) {
-                 $('#entities_results_placeholder').html('<ul id="entities"></ul>');
-                 //alert(data.entities[0].name);
-                 $.each(data.entities, function(i, entity) {
-                     $('<li>'+entity.name+' ('+entity.members_count+')</li>').appendTo('#entities');
-                 });
+         ajax_people_search(search_terms, 1, function(data) {
+             $('#entities_results_placeholder').html('<ul id="entities"></ul>');
+             $.each(data.entities, function(i, entity) {
+                 $('<li>'+entity.name+' ('+entity.members_count+')</li>').appendTo("#entities");
+             });
+             res_entities_cache = data.entities;
 
-                 $('#people_results_placeholder').html('<ul id="people"></ul>');
+             $('#people_results_placeholder').html('<table id="people"></table>');
+             $.each(data.people, function(i, person) {
+                 ajax_person_row_render(person);
+             });
+
+             res_search_terms_cache = search_terms;
+             res_page_num_cache = 1;
+         });
+     });
+
+     $('#trigger_more_results').click( function() {
+         if (res_page_num_cache > 0) {
+             ajax_people_search(res_search_terms_cache, res_page_num_cache+1, function(data) {
+                 if (data.people.length < AJAX_PAGING) {
+                     res_page_num_cache = 0;
+                     return;
+                 }
                  $.each(data.people, function(i, person) {
-                     $('<li>'+person.name+'</li>').appendTo('#people');
+                     ajax_person_row_render(person);
                  });
              });
+             res_page_num_cache += 1;
          }
      });
  });
@@ -39,7 +93,7 @@ Lists entities and people that match search term.
 <div class="row">
     <h1>{% trans "Contacts" %}</h1>
     <p>{% trans "Kontaktų paieškoje galite rasti..." %}</p>
-    <form>
+    <form >
     <input id="search_terms" name="search_terms" type="text"/>
     <input type="button" id="search_button" name="search" value="{% trans "Search" %}"/>
     </form>

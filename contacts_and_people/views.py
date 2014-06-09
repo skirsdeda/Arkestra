@@ -464,7 +464,7 @@ def ajax_people_search(request):
     people_details = people.select_related('member_of').prefetch_related('phone_contacts')
     people_view = people_details[obj_skip:obj_skip+obj_return]
 
-    entities_to_ret = []
+    entities_to_ret = {}
     if get_entities_list:
         for e in entities:
             e_t_r = {
@@ -473,7 +473,7 @@ def ajax_people_search(request):
                 'postal_address': e.get_postal_address,
                 'members_count': e.members__count,
             }
-            entities_to_ret.append(e_t_r)
+            entities_to_ret[e.pk] = e_t_r
 
     people_to_ret = []
     for p in people_view:
