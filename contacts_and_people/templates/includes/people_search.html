@@ -33,34 +33,32 @@ function ajax_people_search(search_terms, page_num, ret_func)
 
 function ajax_person_row_render(person)
 {
-     var borderedSquare = '<div class="borderedSquareTL"><!--w3c--></div><div class="borderedSquareTR"><!--w3c--></div><div class="borderedSquareBL"><!--w3c--></div><div class="borderedSquareBR"><!--w3c--></div><div class="c"><!--w3c--></div>'
-     var assoc_entity = { 'inst_address': [], 'postal_address': [], };
-     if (res_entities_cache.hasOwnProperty(person.entity_id))
-         assoc_entity = res_entities_cache[person.entity_id];
-     var row = '<div class="borderedRow"><div class="borderedName contactColumn">'+person.name+borderedSquare+'</div>';
-     var inst_addr = assoc_entity.inst_address.join('<br/>');
-     if (inst_addr)
-         inst_addr += ', <br/>';
-     inst_addr += person.role;
-     row += '<div class="borderedAddress contactColumn">'+inst_addr+borderedSquare+'</div>';
-     var contact_details = person.phones;
-     if (contact_details)
-         contact_details += '<br/>';
-     contact_details += person.email+'<br/>';
-     contact_details += assoc_entity.postal_address.join(', ');
-     row += '<div class="borderedDetails contactColumn">'+contact_details+borderedSquare+'</div><div class="c"><!--w3c--></div></div>';
+    var borderedSquare = '<div class="borderedSquareTL"><!--w3c--></div><div class="borderedSquareTR"><!--w3c--></div><div class="borderedSquareBL"><!--w3c--></div><div class="borderedSquareBR"><!--w3c--></div><div class="c"><!--w3c--></div>'
+    var assoc_entity = { 'inst_address': [], 'postal_address': [], };
+    if (res_entities_cache.hasOwnProperty(person.entity_id))
+        assoc_entity = res_entities_cache[person.entity_id];
+    var row = '<div class="borderedRow"><div class="borderedName contactColumn">'+person.name+borderedSquare+'</div>';
+    var inst_addr = assoc_entity.inst_address.join('<br/>');
+    if (inst_addr)
+        inst_addr += ', <br/>';
+    inst_addr += person.role;
+    row += '<div class="borderedAddress contactColumn">'+inst_addr+borderedSquare+'</div>';
+    var contact_details = person.phones;
+    if (contact_details)
+        contact_details += '<br/>';
+    contact_details += person.email+'<br/>';
+    contact_details += assoc_entity.postal_address.join(', ');
+    row += '<div class="borderedDetails contactColumn">'+contact_details+borderedSquare+'</div><div class="c"><!--w3c--></div></div>';
 
-     $(row).appendTo('#people');
+    $(row).appendTo('#people');
+    
 }
     
     
 $(document).ready( function() {
     $('#search_button').click( function() {
         //display result containing div's
-        $("#main > div.contactsResults").show();
-        $("#main > div.contactsList").show();
-        $("#main > #contactsToTop").show();
-        
+        $("#main #contactsLoading").show();
         var search_terms = $('#search_terms').val();
         ajax_people_search(search_terms, 1, function(data) {
             $('#entities_results_placeholder').html('<ul id="entities"></ul>');
@@ -73,10 +71,17 @@ $(document).ready( function() {
             $.each(data.people, function(i, person) {
                 ajax_person_row_render(person);
             });
-
-            //Set height of inner row elements
-            var divRow = $("#people > div.borderedRow");
+ 
+            res_search_terms_cache = search_terms;
+            res_page_num_cache = 1;
+            $("#main #contactsLoading").hide();
+            $("#main > div.contactsResults").show();
+            $("#main > div.contactsList").show();
+            $("#main > #contactsToTop").show();
             
+            //Set height of inner row elements
+            
+            var divRow = $("#people > div.borderedRow")
             var colHeightTransform = function(){
                 
                 divRow.each(function(){
@@ -100,14 +105,10 @@ $(document).ready( function() {
             };
             
             $(window).resize(colHeightTransformRecall);
-            $(window).on("click", colHeightTransformRecall);
             $(window).load(colHeightTransformRecall);
             
             colHeightTransform();
-
- 
-            res_search_terms_cache = search_terms;
-            res_page_num_cache = 1;
+            
         });
     });
     
@@ -118,6 +119,8 @@ $(document).ready( function() {
 
     $('#trigger_more_results').click( function() {
         if (res_page_num_cache > 0) {
+            $("#main #contactsLoading2").show();
+            console.log("bb");
             ajax_people_search(res_search_terms_cache, res_page_num_cache+1, function(data) {
                 if (data.people.length < AJAX_PAGING) {
                     res_page_num_cache = 0;
@@ -128,6 +131,7 @@ $(document).ready( function() {
                 });
             });
             res_page_num_cache += 1;
+            $("#main #contactsLoading2").hide();
         }
     });
 });
@@ -154,9 +158,11 @@ $(document).ready( function() {
     </div>
     <div class="secondColumn">
         <div id="people_results_placeholder"></div>
+        <div id="contactsLoading2"><img src="{% static "images/loading.gif" %}" alt="Back to top"></div>
     </div>
-    <div id="trigger_more_results"><!--w3c--></div>
+    <div id="trigger_more_results">Load more -><!--w3c--></div>
     <div class="c"><!--w3c--></div>
 </div>
+ <div id="contactsLoading"><img src="{% static "images/loading.gif" %}" alt="Back to top"></div>
 <div id="contactsToTop"><img src="{% static "images/contactArrowUp.png" %}" alt="Back to top"></div>
 <div class="contactsSpacer"><!--w3c--></div>
