@@ -37,7 +37,7 @@ function ajax_person_row_render(person)
     var assoc_entity = { 'inst_address': [], 'postal_address': [], };
     if (res_entities_cache.hasOwnProperty(person.entity_id))
         assoc_entity = res_entities_cache[person.entity_id];
-    var row = '<div class="borderedRow"><div class="borderedName contactColumn">'+person.name+borderedSquare+'</div>';
+    var row = '<div class="borderedRow freshRow"><div class="borderedName contactColumn">'+person.name+borderedSquare+'</div>';
     var inst_addr = assoc_entity.inst_address.join('<br/>');
     if (inst_addr)
         inst_addr += ', <br/>';
@@ -53,6 +53,41 @@ function ajax_person_row_render(person)
     $(row).appendTo('#people');
     
 }
+
+var setHeight = function(){
+     //Set height of inner row elements
+            
+        var divRow = $("#people > div.freshRow")
+        var colHeightTransform = function(){
+            
+            divRow.each(function(){
+                
+                var divCol = $(this).find('> div[class*="contactColumn"]');
+                var colHeight = 0;
+                divCol.each(function(){
+                    if ( $(this).outerHeight() > colHeight ) {
+                        colHeight = $(this).outerHeight();
+                    }
+                });
+                
+                divCol.css("height", colHeight);
+                
+            });
+        };
+        
+        var colHeightTransformRecall = function(){
+            divRow.find('> div[class*="contactColumn"]').css("height", "auto");
+            colHeightTransform();
+        };
+        
+        $(window).resize(colHeightTransformRecall);
+        $(window).load(colHeightTransformRecall);
+        
+        colHeightTransform();
+        
+        divRow.removeClass("freshRow");
+};
+           
     
     
 $(document).ready( function() {
@@ -70,43 +105,16 @@ $(document).ready( function() {
                 el.preventDefault();
                 alert($(el).data('entityid'));
             });
- 
-            res_search_terms_cache = search_terms;
-            res_page_num_cache = 1;
+            
+            $('#people_results_placeholder').html('<div id="people"></div>');
+            $.each(data.people, function(i, person) {
+                ajax_person_row_render(person);
+            });
             $("#main #contactsLoading").hide();
             $("#main > div.contactsResults").show();
             $("#main > div.contactsList").show();
             $("#main > #contactsToTop").show();
-            
-            //Set height of inner row elements
-            
-            var divRow = $("#people > div.borderedRow")
-            var colHeightTransform = function(){
-                
-                divRow.each(function(){
-                    
-                    var divCol = $(this).find('> div[class*="contactColumn"]');
-                    var colHeight = 0;
-                    divCol.each(function(){
-                        if ( $(this).outerHeight() > colHeight ) {
-                            colHeight = $(this).outerHeight();
-                        }
-                    });
-                    
-                    divCol.css("height", colHeight);
-                    
-                });
-            };
-            
-            var colHeightTransformRecall = function(){
-                divRow.find('> div[class*="contactColumn"]').css("height", "auto");
-                colHeightTransform();
-            };
-            
-            $(window).resize(colHeightTransformRecall);
-            $(window).load(colHeightTransformRecall);
-            
-            colHeightTransform();
+            setHeight();
  
             res_search_terms_cache = search_terms;
             res_page_num_cache = 1;
@@ -118,25 +126,32 @@ $(document).ready( function() {
         $("html, body").animate({ scrollTop: 0 }, "slow");
         return false;
     });
-
-    $('#trigger_more_results').click( function() {
-        if (res_page_num_cache > 0) {
-            $("#main #contactsLoading2").show();
-            console.log("bb");
-            ajax_people_search(res_search_terms_cache, res_page_num_cache+1, function(data) {
-                if (data.people.length < AJAX_PAGING) {
-                    res_page_num_cache = 0;
-                    return;
-                }
-                $.each(data.people, function(i, person) {
-                    ajax_person_row_render(person);
+    
+    $(window).scroll(function () {
+        var triggerMoreResults = $('#trigger_more_results').position().top;
+        if ($(this).scrollTop() + $(window).height() > triggerMoreResults) {
+            if (res_page_num_cache > 0) {
+                $("#main #contactsLoading2").show();
+                ajax_people_search(res_search_terms_cache, res_page_num_cache+1, function(data) {
+                    if (data.people.length < AJAX_PAGING) {
+                        res_page_num_cache = 0;
+                        return;
+                    }
+                    $.each(data.people, function(i, person) {
+                        ajax_person_row_render(person);
+                    });
+                    $("#main #contactsLoading2").hide();
+                    setHeight();
                 });
-            });
-            res_page_num_cache += 1;
-            $("#main #contactsLoading2").hide();
+                res_page_num_cache += 1;
+            }
         }
     });
 });
+
+
+
+
 
 {% endautoescape %}
 </script>
@@ -146,7 +161,7 @@ $(document).ready( function() {
     <p>{% trans "Kontaktų paieškoje galite rasti darbuotojų kontaktus, padalinių adresus. Į paiešką įveskite ieškomą frazę arba dalį jos. Norėdami surasti konkretų darbuotoją iš tam tikro padalinio, rašykite padalinio pavadinimą ir darbuotojo vardą arba pavardę." %}</p>
     <form id="search_form">
         <input id="search_terms" name="search_terms" type="text"/>
-        <input type="button" id="search_button" name="search" value="{% trans "Search" %}"/>
+        <input type="submit" id="search_button" name="search" value="{% trans "Search" %}"/>
         <div class="c"><!--w3c--></div>
     </form>
     <p class="contactExample">{% trans 'Pvz. "Jonas," "Donelaičio" arba "IT padalinys Mantas"' %}</p>
@@ -160,9 +175,9 @@ $(document).ready( function() {
     </div>
     <div class="secondColumn">
         <div id="people_results_placeholder"></div>
+        <div id="trigger_more_results">Load more -><!--w3c--></div>
         <div id="contactsLoading2"><img src="{% static "images/loading.gif" %}" alt="Back to top"></div>
     </div>
-    <div id="trigger_more_results">Load more -><!--w3c--></div>
     <div class="c"><!--w3c--></div>
 </div>
  <div id="contactsLoading"><img src="{% static "images/loading.gif" %}" alt="Back to top"></div>
