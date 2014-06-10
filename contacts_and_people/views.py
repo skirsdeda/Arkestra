@@ -156,7 +156,7 @@ def people_search(request):
     """
     entity = Entity.objects.base_entity()
     # for the menu, because next we mess up the path
-    request.auto_page_url = entity.get_auto_page_url("contact-entity")
+    #request.auto_page_url = entity.get_auto_page_url("contact-entity")
     # request.path = entity.get_website.get_absolute_url() # for the menu, so it knows where we are
     request.current_page = entity.get_website
     template = entity.get_template()

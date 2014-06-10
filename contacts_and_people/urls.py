@@ -36,7 +36,7 @@ urlpatterns = patterns(
         ),
     # common people search
     url(
-        r"^contacts$",
+        r"^$",
         view="people_search",
         name="contact-people-search"
         ),
@@ -51,12 +51,4 @@ urlpatterns = patterns(
     #ajax
     url(r"^ajax_people_search/$",
         view="ajax_people_search"),
-
-    # news, events, vacancies, studentships
-    (r'^', include('news_and_events.urls')),
-    (r'^', include('vacancies_and_studentships.urls')),
-
-    # housekeeping
-    (r'^', include('housekeeping.urls')),
-    (r'^', include('arkestra_image_plugin.urls')),
-    )
+)
