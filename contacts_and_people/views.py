@@ -489,6 +489,7 @@ def ajax_people_search(request):
     ret = {
         'entities': entities_to_ret,
         'people': people_to_ret,
+        'people_count': people.count(),
     }
     return http.HttpResponse(content=simplejson.dumps(ret, ensure_ascii=False, indent=4), mimetype='application/json; charset=utf-8')
     
