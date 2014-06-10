@@ -56,20 +56,19 @@ function ajax_person_row_render(person)
     
     
 $(document).ready( function() {
-    $('#search_button').click( function() {
+    $('#search_form').submit( function() {
         //display result containing div's
         $("#main #contactsLoading").show();
         var search_terms = $('#search_terms').val();
         ajax_people_search(search_terms, 1, function(data) {
             $('#entities_results_placeholder').html('<ul id="entities"></ul>');
             $.each(data.entities, function(i, entity) {
-                $('<li>'+entity.name+' ('+entity.members_count+')</li>').appendTo("#entities");
+                $('<li><a href="" data-entityid="'+i+'">'+entity.name+' ('+entity.members_count+')</a></li>').appendTo("#entities");
             });
             res_entities_cache = data.entities;
-
-            $('#people_results_placeholder').html('<div id="people"></div>');
-            $.each(data.people, function(i, person) {
-                ajax_person_row_render(person);
+            $('#entities a').click( function(el) {
+                el.preventDefault();
+                alert($(el).data('entityid'));
             });
  
             res_search_terms_cache = search_terms;
@@ -108,8 +107,11 @@ $(document).ready( function() {
             $(window).load(colHeightTransformRecall);
             
             colHeightTransform();
-            
+ 
+            res_search_terms_cache = search_terms;
+            res_page_num_cache = 1;
         });
+        return false;
     });
     
     $('#contactsToTop').click( function (){
@@ -142,7 +144,7 @@ $(document).ready( function() {
 <div class="contacts">
     <h1>{% trans "Kontaktai" %}</h1>
     <p>{% trans "Kontaktų paieškoje galite rasti darbuotojų kontaktus, padalinių adresus. Į paiešką įveskite ieškomą frazę arba dalį jos. Norėdami surasti konkretų darbuotoją iš tam tikro padalinio, rašykite padalinio pavadinimą ir darbuotojo vardą arba pavardę." %}</p>
-    <form >
+    <form id="search_form">
         <input id="search_terms" name="search_terms" type="text"/>
         <input type="button" id="search_button" name="search" value="{% trans "Search" %}"/>
         <div class="c"><!--w3c--></div>
