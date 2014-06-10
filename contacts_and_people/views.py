@@ -469,7 +469,7 @@ def ajax_people_search(request):
         for e in entities:
             e_t_r = {
                 'name': e.name,
-                'inst_address': [ee.name for ee in e._get_institutional_address].reverse(),
+                'inst_address': [ee.name for ee in reversed(e._get_institutional_address)],
                 'postal_address': e.get_postal_address,
                 'members_count': e.members__count,
             }
