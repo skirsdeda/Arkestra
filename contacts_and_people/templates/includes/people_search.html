@@ -15,6 +15,7 @@ var res_entities_cache = {}
 var res_search_terms_cache = '';
 var res_page_num_cache = 0;
 var res_people_count_cache = 0;
+var ajax_loading = false;
 
 function ajax_people_search(search_terms, page_num, ret_func)
 {
@@ -29,10 +30,13 @@ function ajax_people_search(search_terms, page_num, ret_func)
         "obj_return": AJAX_PAGING,
         "obj_skip": AJAX_PAGING * (page_num-1), 
     };
+    ajax_loading = true;
     $.getJSON( "/ajax_people_search/?", get_args, function(data) {
         if (page_num == 1)
             res_people_count_cache = parseInt(data.people_count);
         ret_func(data);
+    }).always(function() {
+       ajax_loading = false; 
     });
 }
 
@@ -98,7 +102,8 @@ var setHeight = function(){
 $(document).ready( function() {
     $('#search_form').submit( function() {
         //display result containing div's
-        $("#main #contactsLoading").show();
+        $("#contactsLoading").show();
+        $("#contactsToTop, #contactsNoResults, div.contactsResults, div.contactsList").hide();
         var search_terms = $('#search_terms').val();
         ajax_people_search(search_terms, 1, function(data) {
             $('#entities_results_placeholder').html('<ul id="entities"></ul>');
@@ -116,15 +121,14 @@ $(document).ready( function() {
                 ajax_person_row_render(person);
             });
             $("#main #contactsLoading").hide();
-            $("#main > div.contactsResults").show();
-            $("#main > div.contactsList").show();
-            $("#main > #contactsToTop").show();
-
             if (res_people_count_cache == 0) {
-                // parasyti kad nieko nerasta!!!
+                $("#main #contactsNoResults").show();
                 res_page_num_cache = 0;
                 return;
             }
+            
+            $("#main #contactsNoResults").hide();
+            $("#contactsToTop, div.contactsResults, div.contactsList").show();
 
             setHeight();
  
@@ -140,16 +144,20 @@ $(document).ready( function() {
     });
     
     $(window).scroll(function () {
+        if (ajax_loading)
+            return;
         var triggerMoreResults = $('#trigger_more_results').position().top;
         if ($(this).scrollTop() + $(window).height() > triggerMoreResults) {
-            if (res_page_num_cache > 0 && res_poeple_count_cache > res_page_num_cache*AJAX_PAGING) {
+            if (res_page_num_cache > 0 && res_people_count_cache > res_page_num_cache*AJAX_PAGING) {
                 $("#main #contactsLoading2").show();
+                
                 ajax_people_search(res_search_terms_cache, res_page_num_cache+1, function(data) {
                     $.each(data.people, function(i, person) {
                         ajax_person_row_render(person);
                     });
                     $("#main #contactsLoading2").hide();
                     setHeight();
+                    
                 });
                 res_page_num_cache += 1;
             }
@@ -181,17 +189,20 @@ $(document).ready( function() {
 <div class="contactsResults">
     <h2>{% trans "Rezultatai" %}</h2>
 </div>
+<div id="contactsNoResults">
+    <h2>Rezultatų nėra!</h2>
+</div>
 <div class="contactsList">
     <div class="firstColumn">
         <div id="entities_results_placeholder"></div>
     </div>
     <div class="secondColumn">
         <div id="people_results_placeholder"></div>
-        <div id="trigger_more_results">Load more -><!--w3c--></div>
+        <div id="trigger_more_results"><!--w3c--></div>
         <div id="contactsLoading2"><img src="{% static "images/loading.gif" %}" alt="Back to top"></div>
     </div>
     <div class="c"><!--w3c--></div>
 </div>
- <div id="contactsLoading"><img src="{% static "images/loading.gif" %}" alt="Back to top"></div>
+<div id="contactsLoading"><img src="{% static "images/loading.gif" %}" alt="Loading..."></div>
 <div id="contactsToTop"><img src="{% static "images/contactArrowUp.png" %}" alt="Back to top"></div>
 <div class="contactsSpacer"><!--w3c--></div>
