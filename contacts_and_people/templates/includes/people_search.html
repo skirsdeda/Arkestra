@@ -31,7 +31,7 @@ function ajax_people_search(search_terms, page_num, ret_func)
         "obj_skip": AJAX_PAGING * (page_num-1), 
     };
     ajax_loading = true;
-    $.getJSON( "/ajax_people_search/?", get_args, function(data) {
+    $.getJSON( "{% url ajax-people-search %}", get_args, function(data) {
         if (page_num == 1)
             res_people_count_cache = parseInt(data.people_count);
         ret_func(data);
