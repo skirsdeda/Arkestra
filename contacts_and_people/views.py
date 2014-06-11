@@ -454,7 +454,7 @@ def ajaxGetMembershipForPerson(request):
 def ajax_people_search(request):
     from django.db.models import Count
     
-    search_terms = request.GET.get('search_terms')
+    search_terms = request.GET.get('search_terms', '')
     obj_skip = int(request.GET.get('obj_skip', 0))
     obj_return = int(request.GET.get('obj_return', 20))
     get_entities_list = bool(request.GET.get('get_entities_list', False))

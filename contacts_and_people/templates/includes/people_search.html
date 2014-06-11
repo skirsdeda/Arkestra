@@ -99,7 +99,7 @@ var setHeight = function(){
         divRow.removeClass("freshRow");
 };
            
-var newSearch = function(filterByEntityId=0) {
+var newSearch = function(filterByEntityId) {
     //display result containing div's
     $("#contactsLoading").show();
     $("#contactsToTop, #contactsNoResults, div.contactsResults, div.contactsList").hide();
@@ -150,7 +150,7 @@ var entity_faceting_click = function(el) {
     
 $(document).ready( function() {
     $('#search_form').submit( function() {
-        newSearch();
+        newSearch(0);
         return false;
     });
     
