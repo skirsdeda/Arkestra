@@ -458,9 +458,12 @@ def ajax_people_search(request):
     obj_skip = int(request.GET.get('obj_skip', 0))
     obj_return = int(request.GET.get('obj_return', 20))
     get_entities_list = bool(request.GET.get('get_entities_list', False))
+    filter_by_entity_id = int(request.GET.get('filter_by_entity_id', 0))
     # naive search by surname only for now
     people = Person.objects.filter(surname__icontains=search_terms)
-    entities = Entity.objects.filter(members__in=people).select_related('building').annotate(Count('members'))
+    if filter_by_entity_id > 0:
+        people = people.filter(entities__id=filter_by_entity_id)
+    entities = Entity.objects.filter(people__in=people).select_related('building').annotate(Count('members'))
     people_details = people.select_related('member_of').prefetch_related('phone_contacts')
     people_view = people_details[obj_skip:obj_skip+obj_return]
 
