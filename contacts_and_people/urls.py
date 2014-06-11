@@ -50,5 +50,6 @@ urlpatterns = patterns(
 
     #ajax
     url(r"^ajax_people_search/$",
-        view="ajax_people_search"),
+        view="ajax_people_search",
+        name="ajax-people-search"),
 )
